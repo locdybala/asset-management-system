@@ -67,6 +67,14 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label for="role_id">Quyền</label>
+                                    <select name="role_id" class="form-control" id="role_id">
+                                        <option value="admin">Quản trị viên</option>
+                                        <option value="staff">Nhân viên</option>
+                                        <option value="student">Người dùng</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
                                     <label for="">Khoa</label>
                                     <select id="single-select" name="department_id" class="form-control">
                                         @foreach ($departments as $department)

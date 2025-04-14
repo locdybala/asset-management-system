@@ -37,6 +37,8 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'department_id' => $request->department_id, // Nếu có quan hệ với khoa
+            'role' => $request->role_id, // Nếu có phân quyền    
         ]);
 
         return redirect()->route('users.index');
@@ -45,8 +47,9 @@ class UserController extends Controller
     // Hiển thị form chỉnh sửa người dùng
     public function edit($id)
     {
+        $departments = Department::all(); // Nếu có quan hệ với khoa
         $user = User::findOrFail($id);
-        return view('admin.users.create', compact('user'));
+        return view('admin.users.create', compact('user', 'departments'));
     }
     // Cập nhật thông tin người dùng
     public function update(Request $request, $id)
@@ -60,6 +63,8 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'department_id' => $request->department_id, // Nếu có quan hệ với khoa
+            'role' => $request->role_id,
         ]);
 
         return redirect()->route('users.index');
