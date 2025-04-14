@@ -14,7 +14,8 @@
     <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('admin/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('admin/vendor/toastr/css/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/vendor/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('admin/vendor/select2/css/select2.min.css') }}">
+    <link href="{{ asset('admin/vendor/sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
 
 
 
@@ -61,6 +62,7 @@
     <script src="{{ asset('admin/js/plugins-init/datatables.init.js') }}"></script>
     <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('admin/js/plugins-init/select2-init.js') }}"></script>
+    <script src="{{ asset('admin/vendor/sweetalert2/dist/sweetalert2.min.js') }}"></script>
     @yield('js')
 
 </body>

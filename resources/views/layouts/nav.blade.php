@@ -3,13 +3,14 @@
         <ul class="metismenu" id="menu">
             <li class="nav-label first">Main Menu</li>
             <li><a href="{{ route('dashboard') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
-                class="nav-text">Trang chủ</span></a></li>    
+                class="nav-text">Trang chủ</span></a></li>
             </li>
-            <li class="nav-label">Apps</li>
+            <li class="nav-label">Chức năng</li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-app-store"></i><span class="nav-text">Apps</span></a>
+                        class="icon icon-app-store"></i><span class="nav-text">Quản lý</span></a>
                 <ul aria-expanded="false">
-                    <li><a href="./app-profile.html">Profile</a></li>
+                    <li><a href="{{route('departments.index')}}">Quản lý khoa</a></li>
+                    <li><a href="{{route('categories.index')}}">Quản lý danh mục</a></li>
                     <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
                         <ul aria-expanded="false">
                             <li><a href="./email-compose.html">Compose</a></li>
@@ -108,7 +109,7 @@
                 </ul>
             </li>
             <li><a href="{{ route('users.index') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
-                class="nav-text">Quản lý tài khoản</span></a></li>    
+                class="nav-text">Quản lý tài khoản</span></a></li>
             </li>
         </ul>
     </div>
