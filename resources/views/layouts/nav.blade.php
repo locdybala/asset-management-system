@@ -11,14 +11,7 @@
                 <ul aria-expanded="false">
                     <li><a href="{{route('departments.index')}}">Quản lý khoa</a></li>
                     <li><a href="{{route('categories.index')}}">Quản lý danh mục</a></li>
-                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
-                        <ul aria-expanded="false">
-                            <li><a href="./email-compose.html">Compose</a></li>
-                            <li><a href="./email-inbox.html">Inbox</a></li>
-                            <li><a href="./email-read.html">Read</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="./app-calender.html">Calendar</a></li>
+                    <li><a href="{{route('devices.index')}}">Quản lý thiết bị</a></li>
                 </ul>
             </li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
