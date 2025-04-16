@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('units', function (Blueprint $table) {
+            $table->id();
+            $table->string('code')->unique(); // Mã đơn vị tính, ví dụ: 'C', 'B', 'O'...
+            $table->string('name');           // Tên đơn vị tính: chiếc, bộ, ổ, ...
+            $table->text('description')->nullable(); // Mô tả
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('units');
+    }
+};

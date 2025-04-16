@@ -7,14 +7,16 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Category; // Giả sử bạn có mô hình Category
 use Illuminate\Http\Request;
+use App\Models\Unit;
 
 class CategoryController extends Controller
 {
     // Hiển thị danh sách danh mục
     public function index()
     {
+        $units = Unit::all();
         $categories = Category::all(); // Lấy tất cả danh mục
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.categories.index', compact('categories', 'units'));
     }
 
     // Tạo mới danh mục
@@ -23,6 +25,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
+            'unit_id' => 'nullable|exists:units,id',
         ]);
 
         Category::create($request->all());
@@ -33,8 +36,9 @@ class CategoryController extends Controller
     // Hiển thị form sửa danh mục
     public function edit($id)
     {
+        $units = Unit::all();
         $category = Category::findOrFail($id);
-        return response()->json($category);
+        return response()->json($category, $units);
     }
 
     // Cập nhật danh mục
@@ -43,6 +47,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
+            'unit_id' => 'nullable|exists:units,id',
         ]);
 
         $category = Category::findOrFail($id);

@@ -6,6 +6,8 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\DeparmentController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\DeviceController;
+use App\Http\Controllers\admin\UnitController;
+use App\Http\Controllers\admin\SupplierController;
 
 
 Route::middleware('auth')->group(function () {
@@ -22,6 +24,8 @@ Route::prefix('admin')->group(function () {
         Route::resource('departments', DeparmentController::class);
         Route::resource('categories', CategoryController::class);
         Route::resource('devices', DeviceController::class);
+        Route::resource('units', UnitController::class);
+        Route::resource('suppliers', SupplierController::class);
     });
     Route::get('/dashboard', function () {
         return view('dashboard');

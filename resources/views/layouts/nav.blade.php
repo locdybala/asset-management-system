@@ -9,8 +9,10 @@
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                         class="icon icon-app-store"></i><span class="nav-text">Quản lý</span></a>
                 <ul aria-expanded="false">
-                    <li><a href="{{route('departments.index')}}">Quản lý khoa</a></li>
+                    <li><a href="{{route('units.index')}}">Đơn vị tính</a></li>
+                    <li><a href="{{route('suppliers.index')}}">Nhà cung cấp</a></li>
                     <li><a href="{{route('categories.index')}}">Quản lý danh mục</a></li>
+                    <li><a href="{{route('departments.index')}}">Quản lý khoa</a></li>
                     <li><a href="{{route('devices.index')}}">Quản lý thiết bị</a></li>
                 </ul>
             </li>

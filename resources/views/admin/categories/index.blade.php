@@ -54,9 +54,19 @@
                                                     <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                                                 </div>
                                                 <div class="form-group">
+                                                    <label for="unit_id">Đơn vị tính</label>
+                                                    <select class="form-control" name="unit_id" id="unit_id" required>
+                                                        <option value="" selected>--Chọn đơn vị tính--</option>
+                                                        @foreach ($units as $unit)
+                                                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
                                                     <label for="status">Trạng Thái</label>
-                                                    <select class="form-control" name="status" id="status">
-                                                        <option value="1" selected>Hoạt động</option>
+                                                    <select class="form-control" name="status" id="status" required>
+                                                        <option value="" selected>--Chọn trạng thái--</option>
+                                                        <option value="1">Hoạt động</option>
                                                         <option value="0">Không hoạt động</option>
                                                     </select>
                                                 </div>
@@ -89,8 +99,7 @@
                                         @foreach ($categories as $key => $category)
                                             <tr>
                                                 <td><strong>{{ $key + 1 }}</strong></td>
-                                                <td><span
-                                                        class="text-primary font-weight-bold">{{ $category->name }}</span>
+                                                <td><span class="text-primary font-weight-bold">{{ $category->name }}</span>
                                                 </td>
                                                 <td>{{ $category->description }}</td>
                                                 <td>
@@ -105,8 +114,7 @@
                                                         class="text-success">{{ $category->created_at->format('d/m/Y') }}</span>
                                                 </td>
                                                 <td>
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-warning btn-edit-category"
+                                                    <button type="button" class="btn btn-sm btn-warning btn-edit-category"
                                                         data-id="{{ $category->id }}">
                                                         <i class="fa fa-edit"></i> Sửa
                                                     </button>
@@ -133,6 +141,18 @@
                                                                         <div class="form-group">
                                                                             <label for="edit_description">Mô Tả</label>
                                                                             <textarea class="form-control" id="edit_description" name="description"></textarea>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="unit_id">Đơn vị tính</label>
+                                                                            <select class="form-control" name="unit_id"
+                                                                                id="edit_unit_id" required>
+                                                                                <option value="" selected>--Chọn đơn
+                                                                                    vị tính--</option>
+                                                                                @foreach ($units as $unit)
+                                                                                    <option value="{{ $unit->id }}">
+                                                                                        {{ $unit->name }}</option>
+                                                                                @endforeach
+                                                                            </select>
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="edit_status">Trạng Thái</label>
@@ -221,6 +241,7 @@
                     $('#edit_id').val(data.id);
                     $('#edit_name').val(data.name);
                     $('#edit_description').val(data.description);
+                    $('#edit_unit_id').val(data.unit_id);
                     $('#edit_status').val(data.status);
                     $('#editCategoryModal').modal('show');
                 }).fail(() => {
