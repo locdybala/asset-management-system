@@ -13,7 +13,7 @@ class Device extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function deviceItems()
+    public function items()
     {
         return $this->hasMany(DeviceItem::class);
     }
