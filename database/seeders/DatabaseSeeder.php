@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             CategorySeeder::class,
             DeviceSeeder::class,
+            DeviceItemSeeder::class,
         ]);
         // User::factory(10)->create();
     }

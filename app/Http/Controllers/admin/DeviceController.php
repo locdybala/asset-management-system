@@ -20,7 +20,7 @@ class DeviceController extends Controller
     public function show($id)
     {
         $device = Device::findOrFail($id);
-        $device_parts = $device->parts;  // Lấy tất cả các thiết bị con của thiết bị này
+        $device_parts = $device->items;  // Lấy tất cả các thiết bị con của thiết bị này
 
         return view('admin.devices.show', compact('device', 'device_parts'));
     }

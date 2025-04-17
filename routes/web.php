@@ -8,6 +8,8 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\DeviceController;
 use App\Http\Controllers\admin\UnitController;
 use App\Http\Controllers\admin\SupplierController;
+use App\Http\Controllers\admin\DeviceItemController;
+use App\Http\Controllers\admin\BorrowController;
 
 
 Route::middleware('auth')->group(function () {
@@ -26,6 +28,13 @@ Route::prefix('admin')->group(function () {
         Route::resource('devices', DeviceController::class);
         Route::resource('units', UnitController::class);
         Route::resource('suppliers', SupplierController::class);
+        Route::post('/device-items/store', [DeviceItemController::class, 'store'])->name('device-items.store');
+        Route::put('/device-items/{id}', [DeviceItemController::class, 'update'])->name('device-items.update');
+        Route::delete('/device-items/{id}', [DeviceItemController::class, 'destroy'])->name('device-items.destroy');
+        Route::resource('borrows', BorrowController::class);
+        Route::get('/borrows/device-items/{device_id}', [BorrowController::class, 'getDeviceItems']);
+        Route::post('borrows/{id}/approve', [BorrowController::class, 'approve'])->name('borrows.approve');
+        Route::post('borrows/{id}/return', [BorrowController::class, 'markReturned'])->name('borrows.return');
     });
     Route::get('/dashboard', function () {
         return view('dashboard');
