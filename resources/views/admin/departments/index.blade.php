@@ -109,57 +109,12 @@
                                                     <button type="button"
                                                         class="btn btn-sm btn-warning btn-edit-department"
                                                         data-id="{{ $department->id }}">
-                                                        <i class="fa fa-edit"></i> Sửa
+                                                        <i class="fa fa-edit"></i>
                                                     </button>
-                                                    <!-- Modal Sửa Khoa -->
-                                                    <div class="modal fade" id="editDeparmentModal" tabindex="-1"
-                                                        role="dialog" aria-labelledby="modalEditTitle" aria-hidden="true">
-                                                        <div class="modal-dialog" role="document">
-                                                            <form id="edit-deparment-form">
-                                                                @csrf
-                                                                @method('PUT')
-                                                                <input type="hidden" name="id" id="edit_id">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title">Cập nhật Khoa</h5>
-                                                                        <button type="button" class="close"
-                                                                            data-dismiss="modal"><span>&times;</span></button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <div class="form-group">
-                                                                            <label for="edit_name">Tên Khoa</label>
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_name" name="name" required>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <label for="edit_description">Mô Tả</label>
-                                                                            <textarea class="form-control" id="edit_description" name="description"></textarea>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <label for="edit_status">Trạng Thái</label>
-                                                                            <select class="form-control" name="status"
-                                                                                id="edit_status">
-                                                                                <option value="1">Hoạt động</option>
-                                                                                <option value="0">Không hoạt động
-                                                                                </option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div id="edit-form-error"
-                                                                            class="text-danger small d-none"></div>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary"
-                                                                            data-dismiss="modal">Đóng</button>
-                                                                        <button type="submit" class="btn btn-primary">Cập
-                                                                            nhật</button>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
+
                                                     <button class="btn btn-sm btn-danger btn-delete"
                                                         data-id="{{ $department->id }}">
-                                                        <i class="fa fa-trash"></i> Xóa
+                                                        <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -176,6 +131,52 @@
                                         </tr>
                                     </tfoot>
                                 </table>
+                                <!-- Modal Sửa Khoa -->
+                                <div class="modal fade" id="editDeparmentModal" tabindex="-1"
+                                role="dialog" aria-labelledby="modalEditTitle" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <form id="edit-deparment-form">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="id" id="edit_id">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Cập nhật Khoa</h5>
+                                                <button type="button" class="close"
+                                                    data-dismiss="modal"><span>&times;</span></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="edit_name">Tên Khoa</label>
+                                                    <input type="text" class="form-control"
+                                                        id="edit_name" name="name" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="edit_description">Mô Tả</label>
+                                                    <textarea class="form-control" id="edit_description" name="description"></textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="edit_status">Trạng Thái</label>
+                                                    <select class="form-control" name="status"
+                                                        id="edit_status">
+                                                        <option value="1">Hoạt động</option>
+                                                        <option value="0">Không hoạt động
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div id="edit-form-error"
+                                                    class="text-danger small d-none"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Đóng</button>
+                                                <button type="submit" class="btn btn-primary">Cập
+                                                    nhật</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>

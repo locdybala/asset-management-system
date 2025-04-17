@@ -116,7 +116,7 @@
                                                 <td>
                                                     <button type="button" class="btn btn-sm btn-warning btn-edit-category"
                                                         data-id="{{ $category->id }}">
-                                                        <i class="fa fa-edit"></i> Sửa
+                                                        <i class="fa fa-edit"></i>
                                                     </button>
                                                     <!-- Modal Sửa Danh Mục -->
                                                     <div class="modal fade" id="editCategoryModal" tabindex="-1"
