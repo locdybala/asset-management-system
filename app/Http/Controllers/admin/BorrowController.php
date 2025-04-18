@@ -164,13 +164,20 @@ class BorrowController extends Controller
 
     public function getBorrowDetails($id)
     {
-        $borrow = Borrow::with(['details.deviceItem'])->findOrFail($id);
-        
-        $html = view('admin.borrows.partials.details', compact('borrow'))->render();
-        
-        return response()->json([
-            'html' => $html
-        ]);
+        try {
+            $borrow = Borrow::with(['details.deviceItem'])->findOrFail($id);
+            $html = view('admin.borrows.partials.details', compact('borrow'))->render();
+            
+            return response()->json([
+                'success' => true,
+                'html' => $html
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể tải chi tiết mượn thiết bị'
+            ], 500);
+        }
     }
 
     public function show($id)
@@ -205,24 +212,6 @@ class BorrowController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Có lỗi xảy ra khi hủy phiếu mượn: ' . $e->getMessage());
-        }
-    }
-
-    public function getBorrowDetails($id)
-    {
-        try {
-            $borrow = Borrow::with(['borrowDetails.deviceItem'])->findOrFail($id);
-            $details = $borrow->borrowDetails;
-            
-            return response()->json([
-                'success' => true,
-                'html' => view('admin.borrows._details', compact('details'))->render()
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không thể tải chi tiết mượn thiết bị'
-            ], 500);
         }
     }
 }

@@ -112,6 +112,13 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <!-- Chi tiết phiếu mượn sẽ được chèn ngay sau mỗi dòng -->
+                                    <div class="borrow-details-row" data-parent-row-id="{{ $borrow->id }}">
+                                        <div class="borrow-details-wrapper" data-borrow-id="{{ $borrow->id }}" style="display: none;">
+                                            <div class="borrow-details">
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             </tbody>
                             <tfoot>
@@ -129,9 +136,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Container for borrow details -->
-            <div id="borrow-details-container"></div>
         </div>
     </div>
 
@@ -181,116 +185,110 @@
             transform: rotate(180deg);
         }
 
+        .details-row {
+            background: none !important;
+        }
+
+        .details-row:hover {
+            background: none !important;
+        }
+
+        .borrow-details-row {
+            position: relative;
+            width: 100%;
+            background: none !important;
+        }
+
+        .borrow-details-wrapper {
+            margin: 0;
+            width: 100%;
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
         .borrow-details {
-            display: none;
-            margin: 10px 0;
-            border: 1px solid #e5e5e5;
-            border-radius: 4px;
+            padding: 15px 30px;
             background-color: #f8f9fa;
+            border-left: 1px solid #e5e5e5;
+            border-right: 1px solid #e5e5e5;
+            margin: 0 -1px; /* Để border khớp với table */
+        }
+
+        /* Đảm bảo chi tiết nằm đúng vị trí sau mỗi dòng */
+        #example tbody tr {
+            position: relative;
+        }
+
+        /* Fix DataTable styling conflicts */
+        .dataTables_wrapper .borrow-details-row {
+            background: none !important;
+        }
+
+        .dataTables_wrapper .borrow-details-row:hover {
+            background: none !important;
         }
     </style>
 @endsection
 
-@push('scripts')
-    <script>
-        $(document).ready(function() {
-            // Khởi tạo DataTable
-            var table = $('#example').DataTable({
-                pageLength: 10,
-                ordering: true,
-                responsive: true,
-                language: {
-                    "sProcessing": "Đang xử lý...",
-                    "sLengthMenu": "Xem _MENU_ mục",
-                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
-                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
-                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
-                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Tìm:",
-                    "sUrl": "",
-                    "oPaginate": {
-                        "sFirst": "Đầu",
-                        "sPrevious": "Trước",
-                        "sNext": "Tiếp",
-                        "sLast": "Cuối"
-                    }
-                }
-            });
-
-            // Xử lý sự kiện khi click vào nút toggle
-            $(document).on('click', '.toggle-details', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                var borrowId = $(this).data('borrow-id');
-                var $icon = $(this).find('i');
-                var $row = $(this).closest('tr');
-
-                // Remove any existing details div for this borrow
-                $('#borrow-details-' + borrowId).remove();
-
-                // Toggle icon rotation
-                $icon.toggleClass('rotate-icon');
-
-                // If icon is rotated, load and show details
-                if ($icon.hasClass('rotate-icon')) {
-                    // Create and insert details div after the row
-                    var $detailsDiv = $('<div/>', {
-                        id: 'borrow-details-' + borrowId,
-                        class: 'borrow-details p-3'
-                    }).insertAfter($row);
-
-                    // Show loading state
-                    $detailsDiv.html(`
-                        <div class="text-center py-3">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="sr-only">Đang tải...</span>
+@section('js')
+<script>
+    $(document).ready(function() {
+        // Xử lý sự kiện click vào nút toggle-details
+        $('.toggle-details').on('click', function() {
+            const borrowId = $(this).data('borrow-id');
+            const icon = $(this).find('i');
+            const detailsRow = $(`.borrow-details-row[data-parent-row-id="${borrowId}"]`);
+            const detailsWrapper = detailsRow.find('.borrow-details-wrapper');
+            const detailsContainer = detailsWrapper.find('.borrow-details');
+            
+            // Toggle icon
+            icon.toggleClass('rotate-icon');
+            
+            // Nếu đã có nội dung, chỉ cần toggle hiển thị
+            if (detailsContainer.children().length > 0) {
+                detailsWrapper.slideToggle();
+                return;
+            }
+            
+            // Hiển thị loading
+            detailsContainer.html(`
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            `);
+            detailsWrapper.slideDown();
+            
+            // Gọi API lấy chi tiết
+            $.ajax({
+                url: "{{ route('borrows.details', ['id' => ':id']) }}".replace(':id', borrowId),
+                method: 'GET',
+                success: function(response) {
+                    console.log('Response:', response);
+                    if (response.success) {
+                        detailsContainer.html(response.html);
+                    } else {
+                        detailsContainer.html(`
+                            <div class="alert alert-danger m-3">
+                                ${response.message || 'Không thể tải chi tiết phiếu mượn'}
                             </div>
-                            <div class="mt-2">Đang tải dữ liệu...</div>
+                        `);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                    
+                    detailsContainer.html(`
+                        <div class="alert alert-danger m-3">
+                            Có lỗi xảy ra khi tải chi tiết phiếu mượn
                         </div>
-                    `).slideDown();
-
-                    // Load details via AJAX
-                    $.ajax({
-                        url: '{{ route("borrows.details", ["id" => ":id"]) }}'.replace(':id', borrowId),
-                        method: 'GET',
-                        success: function(response) {
-                            console.log('Response:', response); // Debug log
-                            if (response.html) {
-                                $detailsDiv.html(response.html);
-                            } else {
-                                $detailsDiv.html(`
-                                    <div class="text-center text-danger">
-                                        <i class="fa fa-exclamation-circle"></i>
-                                        Không thể tải dữ liệu chi tiết
-                                    </div>
-                                `);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error); // Debug log
-                            console.error('Status:', status);
-                            console.error('Response:', xhr.responseText);
-                            
-                            $detailsDiv.html(`
-                                <div class="text-center text-danger">
-                                    <i class="fa fa-exclamation-circle"></i>
-                                    Có lỗi xảy ra khi tải dữ liệu: ${error}
-                                </div>
-                            `);
-                        }
-                    });
-                } else {
-                    // Hide and remove details
-                    $('#borrow-details-' + borrowId).slideUp(function() {
-                        $(this).remove();
-                    });
+                    `);
                 }
             });
-
-            // Tooltip
-            $('[data-toggle="tooltip"]').tooltip();
         });
-    </script>
-@endpush
+    });
+</script>
+@endsection
