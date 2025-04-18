@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BorrowDetail extends Model
 {
-    protected $fillable = ['borrow_id', 'device_item_id'];
+    protected $guarded = [];
 
     public function borrow() {
         return $this->belongsTo(Borrow::class);

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{ asset('admin/vendor/toastr/css/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/vendor/select2/css/select2.min.css') }}">
     <link href="{{ asset('admin/vendor/sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
-
+    @yield('css')
 
 
 </head>

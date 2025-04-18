@@ -84,8 +84,8 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example" class=" display" style="min-width: 845px">
-                                    <thead>
+                                <table id="example" class="table table-hover display" style="min-width: 845px">
+                                    <thead class="thead-light">
                                         <tr>
                                             <th>#</th>
                                             <th>Tên Danh Mục</th>

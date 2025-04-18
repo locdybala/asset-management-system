@@ -16,9 +16,17 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('borrow_id');
             $table->unsignedBigInteger('device_item_id');
+            
+            // Thông tin mượn trả
+            $table->dateTime('actual_return_date')->nullable();
+            
+            // Ghi chú riêng cho từng thiết bị
+            $table->text('note')->nullable();
 
             $table->foreign('borrow_id')->references('id')->on('borrows')->onDelete('cascade');
             $table->foreign('device_item_id')->references('id')->on('device_items')->onDelete('cascade');
+            
+            $table->timestamps();
         });
     }
 

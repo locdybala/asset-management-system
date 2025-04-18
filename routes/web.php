@@ -35,6 +35,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/borrows/device-items/{device_id}', [BorrowController::class, 'getDeviceItems']);
         Route::post('borrows/{id}/approve', [BorrowController::class, 'approve'])->name('borrows.approve');
         Route::post('borrows/{id}/return', [BorrowController::class, 'markReturned'])->name('borrows.return');
+        Route::post('borrows/{id}/cancel', [BorrowController::class, 'cancel'])->name('borrows.cancel');
+        Route::get('borrows/{id}/details', [BorrowController::class, 'getBorrowDetails'])->name('borrows.details');
     });
     Route::get('/dashboard', function () {
         return view('dashboard');
