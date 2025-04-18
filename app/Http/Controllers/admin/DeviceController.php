@@ -13,14 +13,18 @@ class DeviceController extends Controller
     public function index()
     {
         // Hiển thị danh sách thiết bị
-        $devices = Device::with('category')->get(); // Nếu có quan hệ với danh mục
+        $devices = Device::with([
+            'category.unit',
+            'deviceItems.borrowDetails.borrow',
+            'deviceItems.maintenances'
+        ])->get();
         return view('admin.devices.index', compact('devices'));
     }
 
     public function show($id)
     {
-        $device = Device::findOrFail($id);
-        $device_parts = $device->items;  // Lấy tất cả các thiết bị con của thiết bị này
+        $device = Device::with(['category.unit', 'deviceItems.borrowDetails.borrow', 'deviceItems.maintenances'])->findOrFail($id);
+        $device_parts = $device->deviceItems;  // Sửa từ items thành deviceItems
 
         return view('admin.devices.show', compact('device', 'device_parts'));
     }

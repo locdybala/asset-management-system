@@ -3,10 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DeviceItem extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
+
+    protected $fillable = [
+        'device_id',
+        'code',
+        'name',
+        'status',
+        'is_damaged',
+        'description'
+    ];
 
     public function device()
     {
@@ -20,5 +30,15 @@ class DeviceItem extends Model
 
     public function borrowDetails() {
         return $this->hasMany(BorrowDetail::class);
+    }
+
+    public function maintenances()
+    {
+        return $this->hasMany(Maintenance::class);
+    }
+
+    public function borrows()
+    {
+        return $this->hasMany(Borrow::class);
     }
 }

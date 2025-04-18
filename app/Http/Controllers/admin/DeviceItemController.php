@@ -8,6 +8,15 @@ use App\Models\DeviceItem;
 
 class DeviceItemController extends Controller
 {
+    public function index(Request $request, $device_id)
+    {
+        $deviceItems = DeviceItem::where('device_id', $device_id)
+            ->where('status', 'available')
+            ->get();
+
+        return view('admin.device-items.list', compact('deviceItems'));
+    }
+
     public function store(Request $request)
     {
         foreach ($request->items as $item) {
@@ -38,5 +47,16 @@ class DeviceItemController extends Controller
         $item->delete();
 
         return redirect()->back()->with('success', 'Xoá thiết bị con thành công!');
+    }
+
+    public function getDeviceItems($device_id)
+    {
+        $deviceItems = DeviceItem::where('device_id', $device_id)
+            ->where('status', '!=', 'damaged')
+            ->get();
+
+        return response()->json([
+            'device_items' => $deviceItems
+        ]);
     }
 }
