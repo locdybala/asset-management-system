@@ -159,14 +159,23 @@ class ReportController extends Controller
             ];
         })->toArray();
 
-        $writer = SimpleExcelWriter::create(storage_path('app/public/bao-cao-chi-phi-bao-tri.csv'))
+        $filePath = storage_path('app/public/bao-cao-chi-phi-bao-tri.csv');
+        
+        // Add BOM for UTF-8
+        file_put_contents($filePath, "\xEF\xBB\xBF");
+
+        // Create writer after adding BOM
+        $writer = SimpleExcelWriter::create($filePath)
             ->addHeader($headers)
             ->addRows($data);
 
         return response()->download(
-            storage_path('app/public/bao-cao-chi-phi-bao-tri.csv'),
+            $filePath,
             'bao-cao-chi-phi-bao-tri.csv',
-            ['Content-Type' => 'text/csv']
+            [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="bao-cao-chi-phi-bao-tri.csv"'
+            ]
         )->deleteFileAfterSend();
     }
 
