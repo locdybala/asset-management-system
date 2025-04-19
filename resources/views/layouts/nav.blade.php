@@ -19,14 +19,10 @@
                 </ul>
             </li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-chart-bar-33"></i><span class="nav-text">Charts</span></a>
+                        class="icon icon-chart-bar-33"></i><span class="nav-text">Báo cáo & Thống kê</span></a>
                 <ul aria-expanded="false">
-                    <li><a href="./chart-flot.html">Flot</a></li>
-                    <li><a href="./chart-morris.html">Morris</a></li>
-                    <li><a href="./chart-chartjs.html">Chartjs</a></li>
-                    <li><a href="./chart-chartist.html">Chartist</a></li>
-                    <li><a href="./chart-sparkline.html">Sparkline</a></li>
-                    <li><a href="./chart-peity.html">Peity</a></li>
+                    <li><a href="{{ route('reports.device-status') }}">Tình trạng thiết bị</a></li>
+                    <li><a href="{{ route('reports.maintenance-costs') }}">Chi phí bảo trì</a></li>
                 </ul>
             </li>
             <li class="nav-label">Components</li>
@@ -34,7 +30,7 @@
                         class="icon icon-world-2"></i><span class="nav-text">Bootstrap</span></a>
                 <ul aria-expanded="false">
                     <li><a href="./ui-accordion.html">Accordion</a></li>
-                    <li><a href="./ui-alert.html">Alert</a></li>
+                    <li><a href="./ui-alert.html">Alert</a></li> 
                     <li><a href="./ui-badge.html">Badge</a></li>
                     <li><a href="./ui-button.html">Button</a></li>
                     <li><a href="./ui-modal.html">Modal</a></li>
@@ -50,10 +46,8 @@
                     <li><a href="./ui-typography.html">Typography</a></li>
                     <li><a href="./ui-pagination.html">Pagination</a></li>
                     <li><a href="./ui-grid.html">Grid</a></li>
-
                 </ul>
             </li>
-
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                         class="icon icon-plug"></i><span class="nav-text">Plugins</span></a>
                 <ul aria-expanded="false">
@@ -86,7 +80,6 @@
                     <li><a href="table-datatable-basic.html">Datatable</a></li>
                 </ul>
             </li>
-
             <li class="nav-label">Extra</li>
             <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                         class="icon icon-single-copy-06"></i><span class="nav-text">Pages</span></a>

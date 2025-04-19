@@ -125,24 +125,16 @@
                                         <td>{{ $part->created_at->format('d/m/Y') }}</td>
                                         <td>
                                             <div class="d-flex">
-                                                <!-- Nút sửa -->
-                                                <button class="btn btn-sm btn-warning mr-2 edit-btn"
-                                                        data-id="{{ $part->id }}"
-                                                        data-code="{{ $part->code }}"
-                                                        data-status="{{ $part->status }}"
-                                                        data-toggle="modal"
-                                                        data-target="#editDeviceItemModal">
+                                                <a href="{{ route('qrcode.show', $part->id) }}" class="btn btn-info btn-sm mr-1" title="QR Code">
+                                                    <i class="fa fa-qrcode"></i>
+                                                </a>
+                                                <a href="{{ route('device-items.edit', $part->id) }}" class="btn btn-warning btn-sm mr-1">
                                                     <i class="fa fa-edit"></i>
-                                                </button>
-
-                                                <!-- Nút xóa -->
-                                                <form action="{{ route('device-items.destroy', $part->id) }}"
-                                                      method="POST"
-                                                      style="display:inline-block;"
-                                                      onsubmit="return confirm('Bạn chắc chắn muốn xóa?')">
+                                                </a>
+                                                <form action="{{ route('device-items.destroy', $part->id) }}" method="POST" style="display:inline-block;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger">
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>

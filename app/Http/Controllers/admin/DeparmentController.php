@@ -32,14 +32,20 @@ class DeparmentController extends Controller
 
         Department::create($validated);
 
-        return response()->json(['message' => 'Tạo khoa thành công']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Tạo khoa thành công'
+        ]);
     }
 
     // Hiển thị form chỉnh sửa người dùng
     public function edit($id)
     {
         $department = Department::findOrFail($id);
-        return response()->json($department);
+        return response()->json([
+            'success' => true,
+            'data' => $department
+        ]);
     }
     // Cập nhật thông tin người dùng
     public function update(Request $request, $id)
@@ -55,6 +61,7 @@ class DeparmentController extends Controller
         $department->update($validated);
 
         return response()->json([
+            'success' => true,
             'message' => 'Cập nhật khoa thành công',
             'department' => $department
         ]);

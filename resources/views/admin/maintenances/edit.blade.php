@@ -55,98 +55,71 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('maintenances.update', $maintenance->id) }}" method="POST">
+                        <form action="{{ route('maintenances.update', $maintenance) }}" method="POST">
                             @csrf
                             @method('PUT')
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="text-label">Ngày bắt đầu *</label>
-                                        <input type="date" class="form-control" name="start_date" value="{{ old('start_date', $maintenance->start_date->format('Y-m-d')) }}" required>
-                                        @if($errors->has('start_date'))
-                                            <span class="text-danger">{{ $errors->first('start_date') }}</span>
-                                        @endif
+                                        <label>Thiết bị</label>
+                                        <input type="text" class="form-control" value="{{ $maintenance->deviceItem->device->name }} ({{ $maintenance->deviceItem->code }})" readonly>
+                                        <input type="hidden" name="device_item_id" value="{{ $maintenance->device_item_id }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="text-label">Loại bảo trì *</label>
-                                        <select class="form-control" name="type" required>
-                                            <option value="">-- Chọn loại bảo trì --</option>
-                                            <option value="periodic" {{ old('type', $maintenance->type) == 'periodic' ? 'selected' : '' }}>Bảo trì định kỳ</option>
-                                            <option value="repair" {{ old('type', $maintenance->type) == 'repair' ? 'selected' : '' }}>Sửa chữa</option>
+                                        <label>Loại bảo trì</label>
+                                        <select name="type" class="form-control" required>
+                                            <option value="repair" {{ $maintenance->type === 'repair' ? 'selected' : '' }}>Sửa chữa</option>
+                                            <option value="periodic" {{ $maintenance->type === 'periodic' ? 'selected' : '' }}>Bảo trì định kỳ</option>
                                         </select>
-                                        @if($errors->has('type'))
-                                            <span class="text-danger">{{ $errors->first('type') }}</span>
-                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Ngày bắt đầu</label>
+                                        <input type="date" name="start_date" class="form-control" value="{{ $maintenance->start_date->format('Y-m-d') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Khoảng thời gian bảo trì (tháng)</label>
+                                        <input type="number" name="maintenance_interval" class="form-control" min="1" id="maintenanceInterval" value="{{ $maintenance->maintenance_interval }}" {{ $maintenance->type === 'periodic' ? '' : 'style="display: none;"' }}>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="text-label">Thiết bị *</label>
-                                <select class="form-control select2" name="device_id" id="device_id" required>
-                                    <option value="">Chọn thiết bị</option>
-                                    @foreach($devices as $device)
-                                        <option value="{{ $device->id }}" {{ old('device_id', $maintenance->deviceItem->device_id) == $device->id ? 'selected' : '' }}>
-                                            {{ $device->name }}
-                                        </option>
-                                    @endforeach
+                                <label>Mô tả</label>
+                                <textarea name="description" class="form-control" rows="3" required>{{ $maintenance->description }}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Chi phí dự kiến</label>
+                                <input type="number" name="cost" class="form-control" min="0" value="{{ $maintenance->cost }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <select name="status" class="form-control" required>
+                                    <option value="pending" {{ $maintenance->status === 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
+                                    <option value="in_progress" {{ $maintenance->status === 'in_progress' ? 'selected' : '' }}>Đang thực hiện</option>
+                                    <option value="completed" {{ $maintenance->status === 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                                    <option value="cancelled" {{ $maintenance->status === 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                 </select>
-                                @if($errors->has('device_id'))
-                                    <span class="text-danger">{{ $errors->first('device_id') }}</span>
-                                @endif
-                            </div>
-
-                            <div class="form-group" id="device_items_container" style="display: none;">
-                                <label class="text-label">Chi tiết thiết bị *</label>
-                                <div id="device_items_list" class="row">
-                                    <!-- Chi tiết thiết bị sẽ được tải qua AJAX -->
-                                </div>
-                                @if($errors->has('device_item_id'))
-                                    <span class="text-danger">{{ $errors->first('device_item_id') }}</span>
-                                @endif
                             </div>
 
                             <div class="form-group">
-                                <label class="text-label">Mô tả *</label>
-                                <textarea class="form-control" name="description" rows="3" required>{{ old('description', $maintenance->description) }}</textarea>
-                                @if($errors->has('description'))
-                                    <span class="text-danger">{{ $errors->first('description') }}</span>
-                                @endif
+                                <label>Kết quả</label>
+                                <textarea name="result" class="form-control" rows="3">{{ $maintenance->result }}</textarea>
                             </div>
 
-                            <div class="form-group">
-                                <label class="text-label">Chi phí dự kiến</label>
-                                <input type="number" class="form-control" name="cost" value="{{ old('cost', $maintenance->cost) }}" min="0">
-                                @if($errors->has('cost'))
-                                    <span class="text-danger">{{ $errors->first('cost') }}</span>
-                                @endif
-                            </div>
-
-                            <div class="form-group">
-                                <label class="text-label">Trạng thái *</label>
-                                <select class="form-control" name="status" required>
-                                    <option value="pending" {{ old('status', $maintenance->status) == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
-                                    <option value="in_progress" {{ old('status', $maintenance->status) == 'in_progress' ? 'selected' : '' }}>Đang thực hiện</option>
-                                    <option value="completed" {{ old('status', $maintenance->status) == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
-                                    <option value="cancelled" {{ old('status', $maintenance->status) == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
-                                </select>
-                                @if($errors->has('status'))
-                                    <span class="text-danger">{{ $errors->first('status') }}</span>
-                                @endif
-                            </div>
-
-                            <div class="form-group">
-                                <label class="text-label">Kết quả</label>
-                                <textarea class="form-control" name="result" rows="3">{{ old('result', $maintenance->result) }}</textarea>
-                                @if($errors->has('result'))
-                                    <span class="text-danger">{{ $errors->first('result') }}</span>
-                                @endif
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Cập nhật yêu cầu bảo trì</button>
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            <a href="{{ route('maintenances.index') }}" class="btn btn-secondary">Quay lại</a>
                         </form>
                     </div>
                 </div>
@@ -161,47 +134,14 @@
 @section('js')
 <script>
     $(document).ready(function() {
-        // Initialize select2
-        $('.select2').select2();
-
-        // Load device items when device is selected
-        $('#device_id').on('change', function() {
-            loadDeviceItems($(this).val());
-        });
-
-        // If there's a previously selected device (after validation failure), load its items
-        const selectedDeviceId = $('#device_id').val();
-        if (selectedDeviceId) {
-            loadDeviceItems(selectedDeviceId);
-        }
-
-        // Function to load device items
-        function loadDeviceItems(deviceId) {
-            if (!deviceId) {
-                $('#device_items_container').hide();
-                return;
+        // Hiển thị/ẩn trường khoảng thời gian bảo trì
+        $('select[name="type"]').change(function() {
+            if ($(this).val() === 'periodic') {
+                $('#maintenanceInterval').show();
+            } else {
+                $('#maintenanceInterval').hide();
             }
-
-            $.ajax({
-                url: `/admin/device-items/${deviceId}`,
-                method: 'GET',
-                beforeSend: function() {
-                    $('#device_items_list').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>');
-                    $('#device_items_container').show();
-                },
-                success: function(response) {
-                    $('#device_items_list').html(response);
-
-                    // Re-check previously selected items
-                    @if(old('device_item_id', $maintenance->device_item_id))
-                        $('#device_items_list input[value="{{ old('device_item_id', $maintenance->device_item_id) }}"]').prop('checked', true);
-                    @endif
-                },
-                error: function(xhr, status, error) {
-                    $('#device_items_list').html('<div class="alert alert-danger">Không thể tải danh sách thiết bị. Vui lòng thử lại sau.</div>');
-                }
-            });
-        }
+        });
     });
 </script>
 @endsection

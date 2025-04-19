@@ -115,19 +115,44 @@ class BorrowController extends Controller
 
     public function approve($id)
     {
-        $borrow = Borrow::findOrFail($id);
-        $borrow->update([
-            'status' => 'approved',
-            'staff_id' => auth()->id(),
-        ]);
-        return back()->with('success', 'Phiếu mượn đã được duyệt.');
+        try {
+            $borrow = Borrow::with('details.deviceItem')->findOrFail($id);
+
+            // Kiểm tra trạng thái phiếu mượn
+            if ($borrow->status !== 'pending') {
+                return back()->with('error', 'Chỉ có thể duyệt phiếu mượn đang chờ duyệt.');
+            }
+
+            // Kiểm tra trạng thái các thiết bị
+            foreach ($borrow->details as $detail) {
+                if ($detail->deviceItem->status !== 'available') {
+                    return back()->with('error', 'Không thể duyệt phiếu mượn vì có thiết bị không khả dụng.');
+                }
+            }
+
+            $borrow->update([
+                'status' => 'approved',
+                'staff_id' => auth()->id(),
+                'approved_at' => now()
+            ]);
+
+            return back()->with('success', 'Phiếu mượn đã được duyệt.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
     }
 
     public function markReturned($id)
     {
         DB::beginTransaction();
         try {
-            $borrow = Borrow::with('details')->findOrFail($id);
+            $borrow = Borrow::with('details.deviceItem')->findOrFail($id);
+            
+            // Kiểm tra trạng thái phiếu mượn
+            if ($borrow->status !== 'approved') {
+                return back()->with('error', 'Chỉ có thể đánh dấu trả cho phiếu mượn đã được duyệt.');
+            }
+
             $borrow->update([
                 'status' => 'returned',
                 'return_date' => now(),
@@ -205,7 +230,10 @@ class BorrowController extends Controller
             }
 
             // Cập nhật trạng thái phiếu mượn
-            $borrow->update(['status' => 'cancelled']);
+            $borrow->update([
+                'status' => 'cancelled',
+                'cancelled_at' => now()
+            ]);
 
             DB::commit();
             return back()->with('success', 'Phiếu mượn đã được hủy thành công.');

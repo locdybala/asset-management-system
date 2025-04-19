@@ -89,12 +89,14 @@ class DeviceController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'borrower_type' => 'in:both,student,teacher',
+            'borrower_type' => 'required|in:both,student,teacher',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Tên thiết bị là bắt buộc.',
+            'borrower_type.required' => 'Vui lòng chọn loại người mượn.',
+            'borrower_type.in' => 'Loại người mượn không hợp lệ.',
             'category_id.required' => 'Vui lòng chọn danh mục.',
             'category_id.exists' => 'Danh mục không hợp lệ.',
             'image.image' => 'Tệp tải lên phải là hình ảnh.',
@@ -102,25 +104,46 @@ class DeviceController extends Controller
             'image.max' => 'Ảnh không được vượt quá 2MB.',
         ]);
 
-        $device = new Device($request->except('image'));
+        try {
+            $device = new Device($request->except('image'));
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $path = $file->store('devices', 'public');
-            $device->image = $path;
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $path = $file->store('devices', 'public');
+                $device->image = $path;
+            }
+
+            $device->save();
+
+            return redirect()->route('devices.index')->with('success', 'Thêm thiết bị thành công!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())->withInput();
         }
-
-        $device->save();
-
-        return redirect()->route('devices.index')->with('success', 'Thêm thiết bị thành công!');
     }
 
     public function destroy($id)
     {
         try {
-            $device = Device::findOrFail($id);
+            $device = Device::with('deviceItems')->findOrFail($id);
 
-            // Nếu có thiết bị con liên quan thì bạn có thể xử lý xóa kèm ở đây nếu cần
+            // Kiểm tra xem có thiết bị con nào đang được mượn không
+            $borrowedItems = $device->deviceItems()->where('status', 'borrowed')->count();
+            if ($borrowedItems > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa thiết bị vì có thiết bị con đang được mượn.'
+                ], 400);
+            }
+
+            // Xóa ảnh nếu có
+            if ($device->image && file_exists(public_path('storage/' . $device->image))) {
+                unlink(public_path('storage/' . $device->image));
+            }
+
+            // Xóa thiết bị con
+            $device->deviceItems()->delete();
+            
+            // Xóa thiết bị
             $device->delete();
 
             return response()->json([

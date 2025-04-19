@@ -26,6 +26,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'unit_id' => 'nullable|exists:units,id',
+            'status' => 'required|in:active,inactive'
         ]);
 
         Category::create($request->all());
@@ -38,7 +39,7 @@ class CategoryController extends Controller
     {
         $units = Unit::all();
         $category = Category::findOrFail($id);
-        return response()->json($category, $units);
+        return response()->json(['success' => true, 'data' => $category, 'units' => $units]);
     }
 
     // Cập nhật danh mục
@@ -48,12 +49,13 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'unit_id' => 'nullable|exists:units,id',
+            'status' => 'required|in:active,inactive'
         ]);
 
         $category = Category::findOrFail($id);
         $category->update($request->all());
 
-        return response()->json(['message' => 'Cập nhật danh mục thành công!']);
+        return response()->json(['success' => true, 'message' => 'Cập nhật danh mục thành công!']);
     }
 
     // Xóa danh mục

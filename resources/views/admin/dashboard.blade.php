@@ -97,6 +97,33 @@
             <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6">
                 <div class="card">
                     <div class="card-header">
+                        <h4 class="card-title">Chi phí bảo trì theo tháng</h4>
+                    </div>
+                    <div class="card-body">
+                        <div style="height: 300px;">
+                            <canvas id="maintenanceCostChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Thống kê thiết bị theo danh mục</h4>
+                    </div>
+                    <div class="card-body">
+                        <div style="height: 300px;">
+                            <canvas id="deviceCategoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-6 col-xxl-6 col-lg-6 col-md-6">
+                <div class="card">
+                    <div class="card-header">
                         <h4 class="card-title">Danh sách thiết bị hư hỏng</h4>
                     </div>
                     <div class="card-body">
@@ -169,17 +196,19 @@
     const deviceStatusChart = new Chart(deviceStatusCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Sẵn sàng', 'Đang mượn', 'Hư hỏng'],
+            labels: ['Sẵn sàng', 'Đang mượn', 'Hư hỏng', 'Bảo trì'],
             datasets: [{
                 data: [
                     {{ $deviceStatusStats['available'] ?? 0 }},
                     {{ $deviceStatusStats['borrowed'] ?? 0 }},
-                    {{ $deviceStatusStats['damaged'] ?? 0 }}
+                    {{ $deviceStatusStats['damaged'] ?? 0 }},
+                    {{ $deviceStatusStats['maintenance'] ?? 0 }}
                 ],
                 backgroundColor: [
                     'rgba(40, 199, 111, 0.8)',
                     'rgba(0, 123, 255, 0.8)',
-                    'rgba(255, 193, 7, 0.8)'
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(108, 117, 125, 0.8)'
                 ]
             }]
         },
@@ -237,6 +266,71 @@
                     ticks: {
                         stepSize: 1
                     }
+                }
+            }
+        }
+    });
+
+    // Biểu đồ chi phí bảo trì
+    const maintenanceCostCtx = document.getElementById('maintenanceCostChart').getContext('2d');
+    const maintenanceCostChart = new Chart(maintenanceCostCtx, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($maintenanceCosts->pluck('month')->map(function($month) {
+                return 'Tháng ' . $month;
+            })) !!},
+            datasets: [{
+                label: 'Chi phí bảo trì (VND)',
+                data: {!! json_encode($maintenanceCosts->pluck('total_cost')) !!},
+                backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                borderColor: 'rgba(255, 193, 7, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('vi-VN') + ' VND';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Biểu đồ thiết bị theo danh mục
+    const deviceCategoryCtx = document.getElementById('deviceCategoryChart').getContext('2d');
+    const deviceCategoryChart = new Chart(deviceCategoryCtx, {
+        type: 'pie',
+        data: {
+            labels: {!! json_encode($deviceByCategory->pluck('category.name')) !!},
+            datasets: [{
+                data: {!! json_encode($deviceByCategory->pluck('count')) !!},
+                backgroundColor: [
+                    'rgba(40, 199, 111, 0.8)',
+                    'rgba(0, 123, 255, 0.8)',
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(108, 117, 125, 0.8)',
+                    'rgba(220, 53, 69, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
                 }
             }
         }
