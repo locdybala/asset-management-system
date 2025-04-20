@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('units', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('symbol')->nullable();
-            $table->timestamps();
+        Schema::table('devices', function (Blueprint $table) {
+            $table->unsignedBigInteger('unit_id')->nullable()->after('category_id');
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('set null');
         });
     }
 
@@ -24,12 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Xóa ràng buộc khóa ngoại trước
-        Schema::table('categories', function (Blueprint $table) {
+        Schema::table('devices', function (Blueprint $table) {
             $table->dropForeign(['unit_id']);
+            $table->dropColumn('unit_id');
         });
-
-        // Sau đó mới xóa bảng
-        Schema::dropIfExists('units');
     }
 };

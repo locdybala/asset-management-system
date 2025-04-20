@@ -22,16 +22,18 @@ class DeviceItemSeeder extends Seeder
 
             for ($i = 1; $i <= $quantity; $i++) {
                 // Lấy supplier ngẫu nhiên từ bảng suppliers
-                $supplier = DB::table('suppliers')->inRandomOrder()->first(); // lấy supplier ngẫu nhiên
+                $supplier = DB::table('suppliers')->inRandomOrder()->first();
 
                 DB::table('device_items')->insert([
-                    'device_id'     => $device->id,
-                    'code'          => 'DEV-' . $device->id . '-' . $i,
+                    'device_id' => $device->id,
+                    'code' => 'DEV-' . $device->id . '-' . str_pad($i, 3, '0', STR_PAD_LEFT),
                     'serial_number' => 'SN-' . strtoupper(Str::random(8)),
-                    'status'        => 'available',
-                    'supplier_id'   => $supplier->id, // dùng ID của nhà cung cấp ngẫu nhiên
-                    'created_at'    => $now,
-                    'updated_at'    => $now,
+                    'status' => 'available',
+                    'is_fixed' => false,
+                    'supplier_id' => $supplier->id,
+                    'qr_token' => Str::random(32),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
         }

@@ -10,96 +10,121 @@ use App\Models\Maintenance;
 use App\Models\Room;
 use App\Models\RoomBorrow;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Thống kê cơ bản
+        // Thống kê tổng quan
         $totalDevices = Device::count();
+        $totalDeviceItems = DeviceItem::count();
         $totalBorrows = Borrow::count();
-        $totalDamaged = DeviceItem::where('status', 'damaged')->count();
-        $totalBorrowed = DeviceItem::where('status', 'borrowed')->count();
-
-        // Thống kê phòng
+        $totalRoomBorrows = RoomBorrow::count();
         $totalRooms = Room::count();
-        $totalRoomBorrows = RoomBorrow::where('status', 'approved')->count();
+        $totalDamaged = DeviceItem::where('status', 'broken')->count();
+        $totalBorrowed = DeviceItem::where('status', 'in_use')->count();
         $totalMaintenance = DeviceItem::where('status', 'maintenance')->count();
+        $totalAvailable = DeviceItem::where('status', 'available')->count();
 
         // Tính hiệu suất sử dụng
-        $totalAvailable = DeviceItem::where('status', 'available')->count();
-        $totalInUse = DeviceItem::where('status', 'borrowed')->count();
-        $usageEfficiency = $totalDevices > 0 ? round(($totalInUse / $totalDevices) * 100) : 0;
+        $usageEfficiency = $totalDeviceItems > 0 ? round(($totalBorrowed / $totalDeviceItems) * 100) : 0;
 
         // Thống kê trạng thái thiết bị
-        $deviceStatusStats = [
-            'available' => DeviceItem::where('status', 'available')->count(),
-            'borrowed' => $totalBorrowed,
-            'damaged' => $totalDamaged,
-            'maintenance' => $totalMaintenance
-        ];
+        $deviceStatusStats = DeviceItem::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->get();
 
-        // Thống kê mượn trả theo tháng
-        $borrowStats = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $borrowStats[$i] = Borrow::whereMonth('created_at', $i)
-                ->whereYear('created_at', now()->year)
-                ->count();
-        }
+        // Thống kê mượn theo tháng
+        $borrowStats = Borrow::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('count(*) as total')
+        )
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
 
         // Thống kê mượn phòng theo tháng
-        $roomBorrowStats = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $roomBorrowStats[$i] = RoomBorrow::whereMonth('created_at', $i)
-                ->whereYear('created_at', now()->year)
-                ->count();
-        }
+        $roomBorrowStats = RoomBorrow::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('count(*) as total')
+        )
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
 
-        // Danh sách thiết bị hư hỏng
+        // Danh sách thiết bị hỏng
         $damagedDevices = DeviceItem::with('device')
-            ->where('status', 'damaged')
-            ->latest()
-            ->take(5)
+            ->where('status', 'broken')
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
             ->get();
 
         // Danh sách thiết bị đang mượn
         $borrowedDevices = DeviceItem::with('device')
-            ->where('status', 'borrowed')
-            ->latest()
-            ->take(5)
+            ->where('status', 'in_use')
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
             ->get();
 
         // Danh sách phòng đang mượn
         $borrowedRooms = RoomBorrow::with(['room', 'user'])
             ->where('status', 'approved')
-            ->latest()
-            ->take(5)
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
             ->get();
 
         // Danh sách thiết bị đang bảo trì
-        $maintenanceDevices = DeviceItem::with(['device', 'maintenance'])
+        $maintenanceDevices = DeviceItem::with(['device', 'maintenances'])
             ->where('status', 'maintenance')
-            ->latest()
-            ->take(5)
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
             ->get();
 
         // Thống kê chi phí bảo trì
-        $maintenanceCosts = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $maintenanceCosts[$i] = Maintenance::whereMonth('start_date', $i)
-                ->whereYear('start_date', now()->year)
-                ->sum('cost');
-        }
+        $maintenanceCosts = Maintenance::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('COALESCE(SUM(cost), 0) as total_cost')
+        )
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        // Thống kê thiết bị theo danh mục
+        $deviceByCategory = Device::with('category')
+            ->select('category_id', DB::raw('count(*) as total'))
+            ->groupBy('category_id')
+            ->get();
+
+        // Thống kê mượn theo phòng ban
+        $borrowsByDepartment = Borrow::with('user.department')
+            ->select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')
+            ->get()
+            ->groupBy('user.department.name')
+            ->map(function ($items) {
+                return $items->sum('total');
+            });
 
         return view('admin.dashboard', compact(
             'totalDevices',
+            'totalDeviceItems',
             'totalBorrows',
+            'totalRoomBorrows',
+            'totalRooms',
             'totalDamaged',
             'totalBorrowed',
-            'totalRooms',
-            'totalRoomBorrows',
             'totalMaintenance',
+            'totalAvailable',
             'usageEfficiency',
             'deviceStatusStats',
             'borrowStats',
@@ -108,7 +133,9 @@ class DashboardController extends Controller
             'borrowedDevices',
             'borrowedRooms',
             'maintenanceDevices',
-            'maintenanceCosts'
+            'maintenanceCosts',
+            'deviceByCategory',
+            'borrowsByDepartment'
         ));
     }
 }

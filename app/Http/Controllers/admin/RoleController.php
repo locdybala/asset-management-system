@@ -4,36 +4,38 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::with('permissions')->get();
         return view('admin.roles.index', compact('roles'));
     }
 
     public function create()
     {
-        return view('admin.roles.create');
+        $permissions = Permission::all();
+        return view('admin.roles.create', compact('permissions'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:roles',
-            'description' => 'nullable|string',
+            'name' => 'required|unique:roles,name',
+            'permissions' => 'array'
         ]);
 
-        try {
-            Role::create($request->all());
-            return redirect()->route('roles.index')
-                ->with('success', 'Vai trò đã được tạo thành công.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Có lỗi xảy ra khi tạo vai trò: ' . $e->getMessage());
+        $role = Role::create(['name' => $request->name]);
+
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->permissions);
         }
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role created successfully.');
     }
 
     public function show(Role $role)
@@ -43,35 +45,31 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        return view('admin.roles.edit', compact('role'));
+        $permissions = Permission::all();
+        return view('admin.roles.edit', compact('role', 'permissions'));
     }
 
     public function update(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'description' => 'nullable|string',
+            'name' => 'required|unique:roles,name,' . $role->id,
+            'permissions' => 'array'
         ]);
 
-        try {
-            $role->update($request->all());
-            return redirect()->route('roles.index')
-                ->with('success', 'Vai trò đã được cập nhật thành công.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Có lỗi xảy ra khi cập nhật vai trò: ' . $e->getMessage());
+        $role->update(['name' => $request->name]);
+
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->permissions);
         }
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role updated successfully.');
     }
 
     public function destroy(Role $role)
     {
-        try {
-            $role->delete();
-            return redirect()->route('roles.index')
-                ->with('success', 'Vai trò đã được xóa thành công.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Có lỗi xảy ra khi xóa vai trò: ' . $e->getMessage());
-        }
+        $role->delete();
+        return redirect()->route('roles.index')
+            ->with('success', 'Role deleted successfully.');
     }
 }

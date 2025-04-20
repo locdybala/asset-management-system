@@ -301,7 +301,13 @@
                                     <tr>
                                         <td>{{ $device->code }}</td>
                                         <td>{{ $device->device->name }}</td>
-                                        <td>{{ $device->maintenance->start_date->format('d/m/Y') }}</td>
+                                        <td>
+                                            @if($device->maintenance && $device->maintenance->start_date)
+                                                {{ $device->maintenance->start_date->format('d/m/Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td><span class="badge badge-warning">Đang bảo trì</span></td>
                                     </tr>
                                     @endforeach

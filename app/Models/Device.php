@@ -13,7 +13,8 @@ class Device extends Model
         'name',
         'description',
         'category_id',
-        'status'
+        'unit_id',
+        'image'
     ];
 
     public function category()
@@ -21,8 +22,18 @@ class Device extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     public function deviceItems()
     {
         return $this->hasMany(DeviceItem::class);
+    }
+
+    public function maintenances()
+    {
+        return $this->hasManyThrough(Maintenance::class, DeviceItem::class);
     }
 }

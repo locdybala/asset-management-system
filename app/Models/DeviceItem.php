@@ -16,15 +16,14 @@ class DeviceItem extends Model
     protected $fillable = [
         'device_id',
         'code',
-        'name',
+        'serial_number',
         'status',
-        'is_damaged',
-        'description',
+        'is_fixed',
+        'room_id',
+        'supplier_id',
         'qr_code',
         'qr_token',
-        'last_scanned_at',
-        'room_id',
-        'is_fixed'
+        'last_scanned_at'
     ];
 
     protected $casts = [
@@ -47,18 +46,14 @@ class DeviceItem extends Model
         return $this->belongsTo(Room::class);
     }
 
-    public function borrowDetails() {
+    public function borrowDetails()
+    {
         return $this->hasMany(BorrowDetail::class);
     }
 
     public function maintenances()
     {
         return $this->hasMany(Maintenance::class);
-    }
-
-    public function borrows()
-    {
-        return $this->hasMany(Borrow::class);
     }
 
     public function qrScans()
@@ -69,33 +64,22 @@ class DeviceItem extends Model
     // Tạo QR code cho thiết bị
     public function generateQrCode()
     {
-        // Tạo token ngẫu nhiên nếu chưa có
         if (!$this->qr_token) {
             $this->qr_token = Str::random(32);
             $this->save();
         }
 
-        // Tạo URL cho QR code
-        $url = route('device-items.scan', ['token' => $this->qr_token]);
+        $qrCode = QrCode::size(200)
+            ->format('png')
+            ->generate($this->qr_token);
 
-        // Tạo QR code với Google Charts API
-        $qrCodeUrl = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" . urlencode($url);
+        $path = 'qrcodes/' . $this->id . '.png';
+        Storage::disk('public')->put($path, $qrCode);
 
-        // Tải QR code từ Google Charts API
-        $response = Http::get($qrCodeUrl);
-        if ($response->successful()) {
-            // Lưu QR code vào storage
-            $filename = 'qrcodes/' . $this->id . '_' . time() . '.png';
-            Storage::disk('public')->put($filename, $response->body());
+        $this->qr_code = $path;
+        $this->save();
 
-            // Cập nhật đường dẫn QR code
-            $this->qr_code = $filename;
-            $this->save();
-
-            return $this->qr_code;
-        }
-
-        return null;
+        return $path;
     }
 
     // Ghi lại lịch sử quét

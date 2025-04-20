@@ -12,8 +12,21 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('department_id')->nullable();
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null');
+            // Thêm cột department_id nếu chưa có
+            if (!Schema::hasColumn('users', 'department_id')) {
+                $table->unsignedBigInteger('department_id')->nullable();
+            }
+
+            // Thêm cột role_id nếu chưa có
+            if (!Schema::hasColumn('users', 'role_id')) {
+                $table->unsignedBigInteger('role_id')->nullable();
+            }
+
+            // Thêm khóa ngoại cho department_id nếu chưa có
+            $table->foreign('department_id')
+                  ->references('id')
+                  ->on('departments')
+                  ->onDelete('set null');
         });
     }
 
@@ -21,7 +34,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['department_id']);
-            $table->dropColumn('department_id');
+            $table->dropColumn(['department_id', 'role_id']);
         });
     }
 };

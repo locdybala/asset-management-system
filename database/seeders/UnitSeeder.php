@@ -13,42 +13,31 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
-        Unit::insert([
+        $units = [
             [
-                'code' => 'C',
                 'name' => 'Chiếc',
-                'description' => 'Đơn vị dùng cho thiết bị đơn lẻ như máy in, máy chiếu',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'symbol' => 'C'
             ],
             [
-                'code' => 'B',
                 'name' => 'Bộ',
-                'description' => 'Dùng cho các thiết bị có nhiều thành phần như bộ máy tính, bộ thực hành',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'symbol' => 'B'
             ],
             [
-                'code' => 'O',
                 'name' => 'Ổ',
-                'description' => 'Đơn vị cho thiết bị lưu trữ như ổ cứng',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'symbol' => 'O'
             ],
             [
-                'code' => 'H',
                 'name' => 'Hộp',
-                'description' => 'Dùng cho thiết bị nhỏ, đóng gói như hộp vi mạch',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'symbol' => 'H'
             ],
             [
-                'code' => 'Cái',
                 'name' => 'Cái',
-                'description' => 'Đơn vị phổ biến, dùng chung cho nhiều loại thiết bị',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+                'symbol' => 'C'
+            ]
+        ];
+
+        foreach ($units as $unit) {
+            Unit::create($unit);
+        }
     }
 }

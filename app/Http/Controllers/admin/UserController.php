@@ -62,9 +62,11 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'department_id' => $request->department_id, // Nếu có quan hệ với khoa
-            'role' => $request->role_id,
+            'department_id' => $request->department_id,
         ]);
+
+        // Sync the role
+        $user->syncRoles([$request->role_id]);
 
         return redirect()->route('users.index');
     }
