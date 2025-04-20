@@ -25,25 +25,25 @@
                                 @if(isset($user))
                                     @method('PUT')
                                 @endif
-                            
+
                                 <div class="form-group">
                                     <label class="text-label">Họ tên *</label>
                                     <input type="text" class="form-control" name="name" placeholder="Nhập họ tên"
                                         value="{{ old('name', $user->name ?? '') }}" required>
                                 </div>
-                            
+
                                 <div class="form-group">
                                     <label class="text-label">Email *</label>
                                     <input type="email" class="form-control" name="email" placeholder="Nhập email"
                                         value="{{ old('email', $user->email ?? '') }}" {{ isset($user) ? 'readonly' : 'required' }}>
                                 </div>
-                            
+
                                 <div class="form-group">
                                     <label class="text-label">Số điện thoại</label>
                                     <input type="text" class="form-control" name="phone" placeholder="Nhập số điện thoại"
                                         value="{{ old('phone', $user->phone ?? '') }}">
                                 </div>
-                            
+
                                 {{-- Chỉ nhập mật khẩu khi tạo mới hoặc đổi --}}
                                 <div class="form-group">
                                     <label class="text-label">Mật khẩu {{ isset($user) ? '(nếu muốn đổi)' : '*' }}</label>
@@ -55,7 +55,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+
                                 <div class="form-group">
                                     <label class="text-label">Xác nhận mật khẩu {{ isset($user) ? '(nếu có nhập mật khẩu)' : '*' }}</label>
                                     <div class="input-group transparent-append">
@@ -69,9 +69,11 @@
                                 <div class="form-group">
                                     <label for="role_id">Quyền</label>
                                     <select name="role_id" class="form-control" id="role_id">
-                                        <option value="admin">Quản trị viên</option>
-                                        <option value="staff">Nhân viên</option>
-                                        <option value="student">Người dùng</option>
+                                        @foreach(\Spatie\Permission\Models\Role::all() as $role)
+                                            <option value="{{ $role->name }}" {{ (isset($user) && $user->hasRole($role->name)) ? 'selected' : '' }}>
+                                                {{ $role->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">

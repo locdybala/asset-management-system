@@ -7,20 +7,26 @@
             <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
                     <h4>Báo cáo tình trạng thiết bị</h4>
+                    <span class="ml-1">Chi tiết báo cáo</span>
                 </div>
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                <div class="btn-group">
-                    <a href="{{ route('reports.device-status-pdf') }}" class="btn btn-primary">
-                        <i class="fas fa-file-pdf"></i> Xuất PDF
-                    </a>
-                </div>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('reports.index') }}">Báo cáo</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Tình trạng thiết bị</a></li>
+                </ol>
             </div>
         </div>
 
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">Thống kê tình trạng thiết bị</h4>
+                        <a href="{{ route('reports.export-device-status-pdf') }}" class="btn btn-secondary">
+                            <i class="fas fa-file-pdf"></i> Xuất PDF
+                        </a>
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -44,19 +50,19 @@
                                                 <td>
                                                     @switch($status)
                                                         @case('available')
-                                                            <span class="badge light badge-success">Sẵn sàng</span>
+                                                            <span class="badge badge-success">Sẵn sàng</span>
                                                             @break
                                                         @case('borrowed')
-                                                            <span class="badge light badge-warning">Đang mượn</span>
+                                                            <span class="badge badge-warning">Đang mượn</span>
                                                             @break
                                                         @case('maintenance')
-                                                            <span class="badge light badge-info">Bảo trì</span>
+                                                            <span class="badge badge-info">Bảo trì</span>
                                                             @break
                                                         @case('damaged')
-                                                            <span class="badge light badge-danger">Hỏng</span>
+                                                            <span class="badge badge-danger">Hỏng</span>
                                                             @break
                                                         @default
-                                                            <span class="badge light badge-secondary">{{ $status }}</span>
+                                                            <span class="badge badge-secondary">{{ $status }}</span>
                                                     @endswitch
                                                 </td>
                                                 <td>{{ $deviceCounts[$status] }}</td>
@@ -77,63 +83,62 @@
 @endsection
 
 @section('js')
-<!-- Thêm các script cần thiết -->
-
-<!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-
 <script>
-$(document).ready(function() {
-    // Đảm bảo Chart.js đã được load
-    if (typeof Chart !== 'undefined') {
-        var ctx = document.getElementById('deviceStatusChart').getContext('2d');
-        var data = {
-            labels: {!! json_encode($statusPercentages->keys()->map(function($key) {
-                switch($key) {
-                    case 'available': return 'Sẵn sàng';
-                    case 'borrowed': return 'Đang mượn';
-                    case 'maintenance': return 'Bảo trì';
-                    case 'damaged': return 'Hỏng';
-                    default: return $key;
-                }
-            })->toArray()) !!},
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('deviceStatusChart').getContext('2d');
+        const statusData = @json($statusPercentages);
+        const deviceCounts = @json($deviceCounts);
+
+        const labels = Object.keys(statusData).map(status => {
+            switch(status) {
+                case 'available': return 'Sẵn sàng';
+                case 'borrowed': return 'Đang mượn';
+                case 'maintenance': return 'Bảo trì';
+                case 'damaged': return 'Hỏng';
+                default: return status;
+            }
+        });
+
+        const data = {
+            labels: labels,
             datasets: [{
-                data: {!! json_encode($statusPercentages->values()->toArray()) !!},
+                data: Object.values(deviceCounts),
                 backgroundColor: [
-                    '#2bc155', // Xanh lá - Sẵn sàng
-                    '#ffb800', // Vàng - Đang mượn
-                    '#1890ff', // Xanh dương - Bảo trì
-                    '#ff4d4f'  // Đỏ - Hỏng
+                    '#28a745', // Success
+                    '#ffc107', // Warning
+                    '#17a2b8', // Info
+                    '#dc3545'  // Danger
                 ],
-                borderWidth: 0
+                borderWidth: 1
             }]
         };
-        var options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    labels: {
-                        boxWidth: 20,
-                        font: {
-                            size: 14
-                        },
-                        padding: 15
+
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const percentage = statusData[Object.keys(statusData)[context.dataIndex]];
+                                return `${label}: ${value} (${percentage.toFixed(2)}%)`;
+                            }
+                        }
                     }
                 }
             }
         };
 
-        new Chart(ctx, {
-            type: 'pie',
-            data: data,
-            options: options
-        });
-    } else {
-        console.error('Chart.js is not loaded');
-    }
-});
+        new Chart(ctx, config);
+    });
 </script>
 @endsection

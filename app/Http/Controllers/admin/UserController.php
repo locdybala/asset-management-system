@@ -37,9 +37,8 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'department_id' => $request->department_id, // Nếu có quan hệ với khoa
-            'role' => $request->role_id, // Nếu có phân quyền
-        ]);
+            'department_id' => $request->department_id,
+        ])->assignRole($request->role_id);
 
         return redirect()->route('users.index');
     }

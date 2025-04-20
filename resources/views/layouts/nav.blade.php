@@ -4,105 +4,110 @@
             <li class="nav-label first">Main Menu</li>
             <li><a href="{{ route('dashboard') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
                 class="nav-text">Trang chủ</span></a></li>
-            </li>
-            <li class="nav-label">Chức năng</li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-app-store"></i><span class="nav-text">Quản lý</span></a>
+
+            <li class="nav-label">Quản lý hệ thống</li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-user menu-icon"></i><span class="nav-text">Quản lý người dùng</span>
+                </a>
                 <ul aria-expanded="false">
-                    <li><a href="{{route('units.index')}}">Đơn vị tính</a></li>
-                    <li><a href="{{route('suppliers.index')}}">Nhà cung cấp</a></li>
-                    <li><a href="{{route('categories.index')}}">Quản lý danh mục</a></li>
-                    <li><a href="{{route('departments.index')}}">Quản lý khoa</a></li>
-                    <li><a href="{{route('devices.index')}}">Quản lý thiết bị</a></li>
-                    <li><a href="{{route('borrows.index')}}">Quản lý phiếu mượn</a></li>
-                    <li><a href="{{route('maintenances.index')}}">Quản lý bảo trì</a></li>
+                    <li><a href="{{ route('users.index') }}">Danh sách người dùng</a></li>
+                    <li><a href="{{ route('users.create') }}">Thêm người dùng</a></li>
+                    <li><a href="{{ route('roles.index') }}">Quản lý vai trò</a></li>
                 </ul>
             </li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-chart-bar-33"></i><span class="nav-text">Báo cáo & Thống kê</span></a>
+
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-list menu-icon"></i><span class="nav-text">Quản lý danh mục</span>
+                </a>
                 <ul aria-expanded="false">
-                    <li><a href="{{ route('reports.device-status') }}">Tình trạng thiết bị</a></li>
+                    <li><a href="{{ route('departments.index') }}">Khoa phòng</a></li>
+                    <li><a href="{{ route('categories.index') }}">Danh mục thiết bị</a></li>
+                    <li><a href="{{ route('units.index') }}">Đơn vị tính</a></li>
+                    <li><a href="{{ route('suppliers.index') }}">Nhà cung cấp</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-label">Quản lý tài sản</li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-screen-desktop menu-icon"></i><span class="nav-text">Quản lý thiết bị</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('devices.index') }}">Danh sách thiết bị</a></li>
+                    <li><a href="{{ route('devices.create') }}">Thêm thiết bị</a></li>
+                    <li><a href="{{ route('device-items.index') }}">Quản lý thiết bị con</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-home menu-icon"></i><span class="nav-text">Quản lý phòng</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('rooms.index') }}">Danh sách phòng</a></li>
+                    <li><a href="{{ route('rooms.create') }}">Thêm phòng</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-label">Quản lý mượn trả</li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-handbag menu-icon"></i><span class="nav-text">Mượn thiết bị</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('device-borrows.index') }}">Danh sách mượn</a></li>
+                    <li><a href="{{ route('borrow-device') }}">Đăng ký mượn</a></li>
+                    <li><a href="{{ route('borrow-history') }}">Lịch sử mượn</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-home menu-icon"></i><span class="nav-text">Mượn phòng</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('room-borrows.index') }}">Danh sách mượn</a></li>
+                    <li><a href="{{ route('borrow-room') }}">Đăng ký mượn</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-label">Quản lý bảo trì</li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-wrench menu-icon"></i><span class="nav-text">Bảo trì</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('maintenances.index') }}">Danh sách bảo trì</a></li>
+                    <li><a href="{{ route('maintenances.create') }}">Thêm bảo trì</a></li>
+                    <li><a href="{{ route('maintenances.check-periodic') }}">Kiểm tra bảo trì định kỳ</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-label">Báo cáo</li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-chart menu-icon"></i><span class="nav-text">Báo cáo</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('reports.index') }}">Tổng quan</a></li>
+                    <li><a href="{{ route('reports.device-status') }}">Trạng thái thiết bị</a></li>
+                    <li><a href="{{ route('reports.department-assets') }}">Tài sản phòng ban</a></li>
                     <li><a href="{{ route('reports.maintenance-costs') }}">Chi phí bảo trì</a></li>
                 </ul>
             </li>
-            <li class="nav-label">Components</li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-world-2"></i><span class="nav-text">Bootstrap</span></a>
+
+            <li class="nav-label">Cấu hình hệ thống</li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-settings menu-icon"></i><span class="nav-text">Cài đặt</span>
+                </a>
                 <ul aria-expanded="false">
-                    <li><a href="./ui-accordion.html">Accordion</a></li>
-                    <li><a href="./ui-alert.html">Alert</a></li> 
-                    <li><a href="./ui-badge.html">Badge</a></li>
-                    <li><a href="./ui-button.html">Button</a></li>
-                    <li><a href="./ui-modal.html">Modal</a></li>
-                    <li><a href="./ui-button-group.html">Button Group</a></li>
-                    <li><a href="./ui-list-group.html">List Group</a></li>
-                    <li><a href="./ui-media-object.html">Media Object</a></li>
-                    <li><a href="./ui-card.html">Cards</a></li>
-                    <li><a href="./ui-carousel.html">Carousel</a></li>
-                    <li><a href="./ui-dropdown.html">Dropdown</a></li>
-                    <li><a href="./ui-popover.html">Popover</a></li>
-                    <li><a href="./ui-progressbar.html">Progressbar</a></li>
-                    <li><a href="./ui-tab.html">Tab</a></li>
-                    <li><a href="./ui-typography.html">Typography</a></li>
-                    <li><a href="./ui-pagination.html">Pagination</a></li>
-                    <li><a href="./ui-grid.html">Grid</a></li>
+                    <li><a href="{{ route('settings.index') }}">Cài đặt hệ thống</a></li>
                 </ul>
-            </li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-plug"></i><span class="nav-text">Plugins</span></a>
-                <ul aria-expanded="false">
-                    <li><a href="./uc-select2.html">Select 2</a></li>
-                    <li><a href="./uc-nestable.html">Nestedable</a></li>
-                    <li><a href="./uc-noui-slider.html">Noui Slider</a></li>
-                    <li><a href="./uc-sweetalert.html">Sweet Alert</a></li>
-                    <li><a href="./uc-toastr.html">Toastr</a></li>
-                    <li><a href="./map-jqvmap.html">Jqv Map</a></li>
-                </ul>
-            </li>
-            <li><a href="widget-basic.html" aria-expanded="false"><i class="icon icon-globe-2"></i><span
-                        class="nav-text">Widget</span></a></li>
-            <li class="nav-label">Forms</li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-form"></i><span class="nav-text">Forms</span></a>
-                <ul aria-expanded="false">
-                    <li><a href="./form-element.html">Form Elements</a></li>
-                    <li><a href="./form-wizard.html">Wizard</a></li>
-                    <li><a href="./form-editor-summernote.html">Summernote</a></li>
-                    <li><a href="form-pickers.html">Pickers</a></li>
-                    <li><a href="form-validation-jquery.html">Jquery Validate</a></li>
-                </ul>
-            </li>
-            <li class="nav-label">Table</li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-layout-25"></i><span class="nav-text">Table</span></a>
-                <ul aria-expanded="false">
-                    <li><a href="table-bootstrap-basic.html">Bootstrap</a></li>
-                    <li><a href="table-datatable-basic.html">Datatable</a></li>
-                </ul>
-            </li>
-            <li class="nav-label">Extra</li>
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-single-copy-06"></i><span class="nav-text">Pages</span></a>
-                <ul aria-expanded="false">
-                    <li><a href="./page-register.html">Register</a></li>
-                    <li><a href="./page-login.html">Login</a></li>
-                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Error</a>
-                        <ul aria-expanded="false">
-                            <li><a href="./page-error-400.html">Error 400</a></li>
-                            <li><a href="./page-error-403.html">Error 403</a></li>
-                            <li><a href="./page-error-404.html">Error 404</a></li>
-                            <li><a href="./page-error-500.html">Error 500</a></li>
-                            <li><a href="./page-error-503.html">Error 503</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="./page-lock-screen.html">Lock Screen</a></li>
-                </ul>
-            </li>
-            <li><a href="{{ route('users.index') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
-                class="nav-text">Quản lý tài khoản</span></a></li>
             </li>
         </ul>
     </div>
-
-
 </div>
+<!-- #/ sidebar -->

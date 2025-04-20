@@ -22,11 +22,14 @@ class DeviceItem extends Model
         'description',
         'qr_code',
         'qr_token',
-        'last_scanned_at'
+        'last_scanned_at',
+        'room_id',
+        'is_fixed'
     ];
 
     protected $casts = [
-        'last_scanned_at' => 'datetime'
+        'last_scanned_at' => 'datetime',
+        'is_fixed' => 'boolean'
     ];
 
     public function device()
@@ -37,6 +40,11 @@ class DeviceItem extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
     }
 
     public function borrowDetails() {
@@ -72,7 +80,7 @@ class DeviceItem extends Model
 
         // Tạo QR code với Google Charts API
         $qrCodeUrl = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" . urlencode($url);
-        
+
         // Tải QR code từ Google Charts API
         $response = Http::get($qrCodeUrl);
         if ($response->successful()) {

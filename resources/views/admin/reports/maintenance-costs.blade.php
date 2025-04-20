@@ -7,17 +7,14 @@
             <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
                     <h4>Báo cáo chi phí bảo trì</h4>
+                    <span class="ml-1">Chi tiết báo cáo</span>
                 </div>
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                <div class="btn-group">
-                    <a href="{{ route('reports.maintenance-costs-pdf') }}" class="btn btn-primary">
-                        <i class="fas fa-file-pdf"></i> Xuất PDF
-                    </a>
-                    <a href="{{ route('reports.maintenance-costs-excel') }}" class="btn btn-success ml-2">
-                        <i class="fas fa-file-excel"></i> Xuất Excel
-                    </a>
-                </div>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('reports.index') }}">Báo cáo</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Chi phí bảo trì</a></li>
+                </ol>
             </div>
         </div>
 
@@ -66,6 +63,17 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">Danh sách chi phí bảo trì</h4>
+                        <div class="d-flex">
+                            <a href="{{ route('reports.export-maintenance-costs-pdf') }}" class="btn btn-secondary mr-2">
+                                <i class="fas fa-file-pdf"></i> Xuất PDF
+                            </a>
+                            <a href="{{ route('reports.export-maintenance-costs-excel') }}" class="btn btn-success">
+                                <i class="fas fa-file-excel"></i> Xuất Excel
+                            </a>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="example" class="display" style="min-width: 845px">
@@ -113,4 +121,4 @@
 <script src="{{ asset('js/custom.min.js') }}"></script>
 <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('js/plugins-init/datatables.init.js') }}"></script>
-@endsection 
+@endsection

@@ -13,4 +13,9 @@ class Department extends Model
         return $this->hasMany(User::class);
     }
 
+    public function deviceItems()
+    {
+        return $this->hasManyThrough(DeviceItem::class, Room::class);
+    }
+
 }

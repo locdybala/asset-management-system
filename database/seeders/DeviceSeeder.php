@@ -5,6 +5,11 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use DB;
+use App\Models\Device;
+use App\Models\Category;
+use App\Models\Unit;
+use App\Models\DeviceItem;
+use Faker\Factory as Faker;
 
 class DeviceSeeder extends Seeder
 {
@@ -13,144 +18,89 @@ class DeviceSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('devices')->insert([
-            // Thiết bị văn phòng - category_id = 1
-            [
-                'name' => 'Máy in Canon LBP2900',
-                'borrower_type' => 'teacher',
-                'category_id' => 1,
-                'description' => 'Máy in laser đen trắng, phù hợp cho văn phòng nhỏ',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Máy chiếu Epson EB-X05',
-                'borrower_type' => 'both',
-                'category_id' => 1,
-                'description' => 'Máy chiếu đa năng dùng trong giảng dạy và hội họp',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Máy photocopy Ricoh MP 2501',
-                'borrower_type' => 'teacher',
-                'category_id' => 1,
-                'description' => 'Thiết bị photo đa chức năng, tốc độ cao',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        $faker = Faker::create();
 
-            // Thiết bị phòng học - category_id = 2
-            [
-                'name' => 'Bảng trắng từ 1m2',
-                'borrower_type' => 'teacher',
-                'category_id' => 2,
-                'description' => 'Bảng trắng từ tính dùng phấn và bút lông',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Bàn học đơn gỗ MDF',
-                'borrower_type' => 'student',
-                'category_id' => 2,
-                'description' => 'Bàn học sinh cấp đại học, khung sắt sơn tĩnh điện',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        // Lấy danh sách danh mục và đơn vị tính
+        $categories = Category::all();
+        $units = Unit::all();
 
-            // Thiết bị phòng lab - category_id = 3
+        // Tạo dữ liệu mẫu cho thiết bị
+        $devices = [
             [
-                'name' => 'Bộ mô phỏng mạch điện tử cơ bản',
-                'borrower_type' => 'student',
-                'category_id' => 3,
-                'description' => 'Dành cho môn học vi điều khiển, mạch điện tử',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'name' => 'Máy tính để bàn',
+                'description' => 'Máy tính để bàn phục vụ học tập và nghiên cứu',
+                'is_fixed' => true
             ],
             [
-                'name' => 'Máy hiện sóng DS1102Z-E',
-                'borrower_type' => 'teacher',
-                'category_id' => 3,
-                'description' => 'Thiết bị đo tín hiệu sóng điện tử, 100MHz',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'name' => 'Máy chiếu',
+                'description' => 'Máy chiếu phục vụ giảng dạy',
+                'is_fixed' => true
             ],
             [
-                'name' => 'Nguồn DC lập trình GW Instek',
-                'borrower_type' => 'both',
-                'category_id' => 3,
-                'description' => 'Nguồn cấp điện đa năng cho phòng lab',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'name' => 'Laptop',
+                'description' => 'Laptop phục vụ học tập và nghiên cứu',
+                'is_fixed' => false
             ],
+            [
+                'name' => 'Máy in',
+                'description' => 'Máy in phục vụ văn phòng',
+                'is_fixed' => true
+            ],
+            [
+                'name' => 'Máy quét',
+                'description' => 'Máy quét tài liệu',
+                'is_fixed' => false
+            ],
+            [
+                'name' => 'Máy ảnh',
+                'description' => 'Máy ảnh phục vụ ghi hình',
+                'is_fixed' => false
+            ],
+            [
+                'name' => 'Máy quay phim',
+                'description' => 'Máy quay phim phục vụ ghi hình',
+                'is_fixed' => false
+            ],
+            [
+                'name' => 'Bàn ghế',
+                'description' => 'Bàn ghế phục vụ học tập',
+                'is_fixed' => true
+            ],
+            [
+                'name' => 'Tủ đựng tài liệu',
+                'description' => 'Tủ đựng tài liệu văn phòng',
+                'is_fixed' => true
+            ],
+            [
+                'name' => 'Điều hòa',
+                'description' => 'Điều hòa không khí',
+                'is_fixed' => true
+            ]
+        ];
 
-            // Thiết bị lưu trữ - category_id = 4
-            [
-                'name' => 'Ổ cứng SSD Samsung 1TB',
-                'borrower_type' => 'teacher',
-                'category_id' => 4,
-                'description' => 'Ổ cứng tốc độ cao dùng lưu trữ dữ liệu giảng dạy',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'USB SanDisk 128GB',
-                'borrower_type' => 'student',
-                'category_id' => 4,
-                'description' => 'USB tốc độ cao, chuẩn 3.0',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        foreach ($devices as $deviceData) {
+            // Chọn ngẫu nhiên một danh mục và đơn vị tính
+            $category = $categories->random();
+            $unit = $units->random();
 
-            // Thiết bị điện tử nhỏ - category_id = 5
-            [
-                'name' => 'Cảm biến nhiệt độ LM35',
-                'borrower_type' => 'student',
-                'category_id' => 5,
-                'description' => 'Cảm biến nhiệt độ cho các dự án IoT',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Module WiFi ESP8266',
-                'borrower_type' => 'student',
-                'category_id' => 5,
-                'description' => 'Dùng cho kết nối không dây trong các đồ án kỹ thuật',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            // Tạo thiết bị
+            $device = Device::create([
+                'name' => $deviceData['name'],
+                'description' => $deviceData['description'],
+                'category_id' => $category->id,
+                'unit_id' => $unit->id
+            ]);
 
-            // Thiết bị phụ trợ - category_id = 6
-            [
-                'name' => 'Bộ tua vít đa năng',
-                'borrower_type' => 'both',
-                'category_id' => 6,
-                'description' => 'Phụ kiện sửa chữa thiết bị điện tử',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Cáp HDMI 5m',
-                'borrower_type' => 'teacher',
-                'category_id' => 6,
-                'description' => 'Cáp truyền tín hiệu hình ảnh cho máy chiếu, màn hình',
-                'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+            // Tạo số lượng thiết bị con ngẫu nhiên (từ 3 đến 10)
+            $quantity = rand(3, 10);
+            for ($i = 1; $i <= $quantity; $i++) {
+                DeviceItem::create([
+                    'device_id' => $device->id,
+                    'code' => $device->code . '-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                    'status' => $faker->randomElement(['available', 'in_use', 'maintenance', 'broken']),
+                    'is_fixed' => $deviceData['is_fixed']
+                ]);
+            }
+        }
     }
 }

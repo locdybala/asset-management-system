@@ -12,9 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'staff', 'student'])->default('student');
             $table->unsignedBigInteger('department_id')->nullable();
-
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null');
         });
     }
@@ -23,7 +21,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['department_id']);
-            $table->dropColumn('role');
             $table->dropColumn('department_id');
         });
     }

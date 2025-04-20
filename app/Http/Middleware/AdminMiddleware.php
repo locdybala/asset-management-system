@@ -15,11 +15,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->role === 'admin') {
-            return $next($request);
+        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'staff'])) {
+            abort(403, 'Unauthorized action.');
         }
 
-        // Nếu không phải admin, chuyển hướng hoặc báo lỗi
-        abort(403, 'Bạn không có quyền truy cập.');
+        return $next($request);
     }
 }
