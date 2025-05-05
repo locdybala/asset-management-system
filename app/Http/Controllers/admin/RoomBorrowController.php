@@ -51,12 +51,12 @@ class RoomBorrowController extends Controller
 
             // Cập nhật trạng thái thiết bị cố định
             $room = Room::find($validated['room_id']);
-            $room->fixedDeviceItems()->update(['status' => 'borrowed']);
+            $room->fixedDeviceItems()->update(['status' => 'in_use']);
 
             // Cập nhật trạng thái thiết bị di động được chọn
             if (!empty($validated['device_items'])) {
                 DeviceItem::whereIn('id', $validated['device_items'])
-                    ->update(['status' => 'borrowed']);
+                    ->update(['status' => 'in_use']);
             }
 
             DB::commit();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DeviceItem;
+use App\Models\Device;
 
 class DeviceItemController extends Controller
 {
@@ -67,9 +68,9 @@ class DeviceItemController extends Controller
 
         try {
             $item = DeviceItem::findOrFail($id);
-            
+
             // Kiểm tra nếu thiết bị đang được mượn
-            if ($item->status === 'borrowed') {
+            if ($item->status === 'in_use') {
                 return back()->with('error', 'Không thể cập nhật thiết bị đang được mượn.');
             }
 
@@ -88,9 +89,9 @@ class DeviceItemController extends Controller
     {
         try {
             $item = DeviceItem::findOrFail($id);
-            
+
             // Kiểm tra nếu thiết bị đang được mượn
-            if ($item->status === 'borrowed') {
+            if ($item->status === 'in_use') {
                 return back()->with('error', 'Không thể xóa thiết bị đang được mượn.');
             }
 
@@ -107,6 +108,17 @@ class DeviceItemController extends Controller
         $deviceItems = DeviceItem::where('device_id', $device_id)
             ->where('status', '!=', 'damaged')
             ->get();
+
+        return response()->json([
+            'device_items' => $deviceItems
+        ]);
+    }
+
+    public function json($deviceId)
+    {
+        $deviceItems = DeviceItem::where('device_id', $deviceId)
+            ->where('status', 'available')
+            ->get(['id', 'code', 'status', 'serial_number']);
 
         return response()->json([
             'device_items' => $deviceItems

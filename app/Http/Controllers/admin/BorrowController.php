@@ -84,16 +84,13 @@ class BorrowController extends Controller
                 try {
                     $deviceItem = DeviceItem::find($deviceItemId);
                     if ($deviceItem) {
-                        // Cập nhật trạng thái thiết bị
-                        $deviceItem->status = 'borrowed';
+                        $deviceItem->status = 'pending';
                         $deviceItem->save();
-
                         // Tạo chi tiết mượn
                         $borrowDetailData = [
                             'borrow_id' => $borrow->id,
                             'device_item_id' => $deviceItemId
                         ];
-
                         BorrowDetail::create($borrowDetailData);
                     }
                 } catch (\Exception $e) {
@@ -105,7 +102,7 @@ class BorrowController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('borrows.index')
+            return redirect()->route('device-borrows.index')
                 ->with('success', 'Phiếu mượn đã được tạo thành công.');
         } catch (\Exception $e) {
             DB::rollback();
@@ -120,14 +117,19 @@ class BorrowController extends Controller
 
             // Kiểm tra trạng thái phiếu mượn
             if ($borrow->status !== 'pending') {
-                return back()->with('error', 'Chỉ có thể duyệt phiếu mượn đang chờ duyệt.');
+                return back()->with('error', 'Không thể duyệt phiếu mượn vì trạng thái hiện tại là: ' . ucfirst($borrow->status));
             }
 
             // Kiểm tra trạng thái các thiết bị
             foreach ($borrow->details as $detail) {
-                if ($detail->deviceItem->status !== 'available') {
+                if ($detail->deviceItem->status !== 'pending') {
                     return back()->with('error', 'Không thể duyệt phiếu mượn vì có thiết bị không khả dụng.');
                 }
+            }
+
+            // Cập nhật trạng thái các thiết bị sang 'in_use'
+            foreach ($borrow->details as $detail) {
+                $detail->deviceItem->update(['status' => 'in_use']);
             }
 
             $borrow->update([
@@ -147,7 +149,7 @@ class BorrowController extends Controller
         DB::beginTransaction();
         try {
             $borrow = Borrow::with('details.deviceItem')->findOrFail($id);
-            
+
             // Kiểm tra trạng thái phiếu mượn
             if ($borrow->status !== 'approved') {
                 return back()->with('error', 'Chỉ có thể đánh dấu trả cho phiếu mượn đã được duyệt.');
@@ -160,8 +162,10 @@ class BorrowController extends Controller
 
             foreach ($borrow->details as $detail) {
                 // Cập nhật trạng thái thiết bị về available
-                $detail->deviceItem->update(['status' => 'available']);
-                
+                if ($detail->deviceItem && $detail->deviceItem->status === 'pending') {
+                    $detail->deviceItem->update(['status' => 'available']);
+                }
+
                 // Cập nhật ngày trả thực tế cho chi tiết mượn
                 $detail->update([
                     'actual_return_date' => now()
@@ -169,7 +173,7 @@ class BorrowController extends Controller
             }
 
             DB::commit();
-            return back()->with('success', 'Phiếu mượn đã được đánh dấu là đã trả.');
+            return redirect()->route('device-borrows.index')->with('success', 'Phiếu mượn đã được đánh dấu là đã trả.');
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Có lỗi xảy ra khi cập nhật trạng thái: ' . $e->getMessage());
@@ -192,7 +196,7 @@ class BorrowController extends Controller
         try {
             $borrow = Borrow::with(['details.deviceItem'])->findOrFail($id);
             $html = view('admin.borrows.partials.details', compact('borrow'))->render();
-            
+
             return response()->json([
                 'success' => true,
                 'html' => $html
@@ -216,7 +220,7 @@ class BorrowController extends Controller
         DB::beginTransaction();
         try {
             $borrow = Borrow::with('details.deviceItem')->findOrFail($id);
-            
+
             // Kiểm tra trạng thái phiếu mượn
             if ($borrow->status !== 'pending') {
                 return back()->with('error', 'Chỉ có thể hủy phiếu mượn đang chờ duyệt.');
@@ -224,7 +228,7 @@ class BorrowController extends Controller
 
             // Cập nhật trạng thái các thiết bị về available
             foreach ($borrow->details as $detail) {
-                if ($detail->deviceItem) {
+                if ($detail->deviceItem && $detail->deviceItem->status === 'pending') {
                     $detail->deviceItem->update(['status' => 'available']);
                 }
             }
@@ -241,6 +245,12 @@ class BorrowController extends Controller
             DB::rollback();
             return back()->with('error', 'Có lỗi xảy ra khi hủy phiếu mượn: ' . $e->getMessage());
         }
+    }
+
+    public function showReturnForm($id)
+    {
+        $borrow = Borrow::with(['details.deviceItem'])->findOrFail($id);
+        return view('admin.borrows.return', compact('borrow'));
     }
 }
 

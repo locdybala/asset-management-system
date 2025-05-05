@@ -37,13 +37,12 @@
                 <ul aria-expanded="false">
                     <li><a href="{{ route('devices.index') }}">Danh sách thiết bị</a></li>
                     <li><a href="{{ route('devices.create') }}">Thêm thiết bị</a></li>
-                    <li><a href="{{ route('device-items.index') }}">Quản lý thiết bị con</a></li>
                 </ul>
             </li>
 
             <li>
                 <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                    <i class="icon-home menu-icon"></i><span class="nav-text">Quản lý phòng</span>
+                    <i class="icon-screen-desktop menu-icon"></i><span class="nav-text">Quản lý phòng</span>
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('rooms.index') }}">Danh sách phòng</a></li>
@@ -58,8 +57,7 @@
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('device-borrows.index') }}">Danh sách mượn</a></li>
-                    <li><a href="{{ route('borrow-device') }}">Đăng ký mượn</a></li>
-                    <li><a href="{{ route('borrow-history') }}">Lịch sử mượn</a></li>
+                    <li><a href="{{ route('device-borrows.create') }}">Đăng ký mượn</a></li>
                 </ul>
             </li>
 

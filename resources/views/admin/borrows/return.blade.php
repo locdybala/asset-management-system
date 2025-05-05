@@ -30,9 +30,8 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('borrows.return', $borrow->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('device-borrows.return.post', $borrow->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            @method('POST')
 
                             <div class="form-group">
                                 <label class="text-label">Ngày trả *</label>
@@ -71,27 +70,33 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($borrow->deviceItems as $item)
-                                            <tr>
-                                                <td>{{ $item->code }}</td>
-                                                <td>{{ $item->serial_number }}</td>
-                                                <td>
-                                                    @switch($item->status)
-                                                        @case('available')
-                                                            <span class="badge badge-success">Có sẵn</span>
-                                                            @break
-                                                        @case('borrowed')
-                                                            <span class="badge badge-warning">Đang mượn</span>
-                                                            @break
-                                                        @case('damaged')
-                                                            <span class="badge badge-danger">Hỏng</span>
-                                                            @break
-                                                        @case('maintenance')
-                                                            <span class="badge badge-info">Bảo trì</span>
-                                                            @break
-                                                    @endswitch
-                                                </td>
-                                            </tr>
+                                            @foreach($borrow->details as $detail)
+                                                @php $item = $detail->deviceItem; @endphp
+                                                @if($item)
+                                                <tr>
+                                                    <td>{{ $item->code }}</td>
+                                                    <td>{{ $item->serial_number }}</td>
+                                                    <td>
+                                                        @switch($item->status)
+                                                            @case('available')
+                                                                <span class="badge badge-success">Có sẵn</span>
+                                                                @break
+                                                            @case('pending')
+                                                                <span class="badge badge-warning">Chờ duyệt</span>
+                                                                @break
+                                                            @case('in_use')
+                                                                <span class="badge badge-primary">Đang mượn</span>
+                                                                @break
+                                                            @case('damaged')
+                                                                <span class="badge badge-danger">Hỏng</span>
+                                                                @break
+                                                            @case('maintenance')
+                                                                <span class="badge badge-info">Bảo trì</span>
+                                                                @break
+                                                        @endswitch
+                                                    </td>
+                                                </tr>
+                                                @endif
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -99,7 +104,7 @@
                             </div>
 
                             <div class="form-group">
-                                <a href="{{ route('borrows.show', $borrow->id) }}" class="btn btn-secondary">Quay lại</a>
+                                <a href="{{ route('device-borrows.show', $borrow->id) }}" class="btn btn-secondary">Quay lại</a>
                                 <button type="submit" class="btn btn-primary">Xác nhận trả thiết bị</button>
                             </div>
                         </form>
@@ -109,4 +114,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

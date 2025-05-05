@@ -17,11 +17,21 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Danh sách phiếu mượn</h4>
-                    <a href="{{ route('borrows.create') }}" class="btn btn-primary">
+                    <a href="{{ route('device-borrows.create') }}" class="btn btn-primary">
                         <i class="fa fa-plus-circle"></i> Tạo phiếu mượn
                     </a>
                 </div>
                 <div class="card-body">
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
                     <div class="table-responsive">
                         <table id="example" class="table table-hover" style="min-width: 845px">
                             <thead class="thead-light">
@@ -83,7 +93,7 @@
                                             <div class="btn-group">
                                                 @if ($borrow->status === 'pending')
                                                     <form method="POST"
-                                                        action="{{ route('borrows.approve', $borrow->id) }}"
+                                                        action="{{ route('device-borrows.approve', $borrow->id) }}"
                                                         class="mr-1">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-success"
@@ -92,7 +102,7 @@
                                                         </button>
                                                     </form>
                                                     <form method="POST"
-                                                        action="{{ route('borrows.cancel', $borrow->id) }}">
+                                                        action="{{ route('device-borrows.cancel', $borrow->id) }}">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-danger"
                                                             data-toggle="tooltip" title="Hủy">
@@ -100,14 +110,9 @@
                                                         </button>
                                                     </form>
                                                 @elseif ($borrow->status === 'approved')
-                                                    <form method="POST"
-                                                        action="{{ route('borrows.return', $borrow->id) }}">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-outline-secondary"
-                                                            data-toggle="tooltip" title="Trả">
-                                                            <i class="fa fa-undo"></i>
-                                                        </button>
-                                                    </form>
+                                                    <a href="{{ route('device-borrows.return', $borrow->id) }}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" title="Trả">
+                                                        <i class="fa fa-undo"></i>
+                                                    </a>
                                                 @endif
                                             </div>
                                         </td>
@@ -240,16 +245,16 @@
             const detailsRow = $(`.borrow-details-row[data-parent-row-id="${borrowId}"]`);
             const detailsWrapper = detailsRow.find('.borrow-details-wrapper');
             const detailsContainer = detailsWrapper.find('.borrow-details');
-            
+
             // Toggle icon
             icon.toggleClass('rotate-icon');
-            
+
             // Nếu đã có nội dung, chỉ cần toggle hiển thị
             if (detailsContainer.children().length > 0) {
                 detailsWrapper.slideToggle();
                 return;
             }
-            
+
             // Hiển thị loading
             detailsContainer.html(`
                 <div class="text-center py-3">
@@ -259,10 +264,10 @@
                 </div>
             `);
             detailsWrapper.slideDown();
-            
+
             // Gọi API lấy chi tiết
             $.ajax({
-                url: "{{ route('borrows.details', ['id' => ':id']) }}".replace(':id', borrowId),
+                url: "{{ route('device-borrows.details', ['id' => ':id']) }}".replace(':id', borrowId),
                 method: 'GET',
                 success: function(response) {
                     console.log('Response:', response);
@@ -280,7 +285,7 @@
                     console.error('Error:', error);
                     console.error('Status:', status);
                     console.error('Response:', xhr.responseText);
-                    
+
                     detailsContainer.html(`
                         <div class="alert alert-danger m-3">
                             Có lỗi xảy ra khi tải chi tiết phiếu mượn
