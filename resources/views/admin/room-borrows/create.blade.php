@@ -59,26 +59,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Thiết bị di động muốn mượn</label>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 50px;">#</th>
-                                                <th>Mã thiết bị</th>
-                                                <th>Tên thiết bị</th>
-                                                <th>Trạng thái</th>
-                                                <th>Chọn</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="mobile-devices-table">
-                                            <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Tạo phiếu mượn</button>
                                 <a href="{{ route('room-borrows.index') }}" class="btn btn-secondary">Hủy</a>
                             </div>
@@ -89,46 +69,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('js')
-<script>
-    $(document).ready(function() {
-        // Lấy danh sách thiết bị di động khi chọn phòng
-        $('select[name="room_id"]').change(function() {
-            const roomId = $(this).val();
-            if (roomId) {
-                $.get(`/admin/rooms/${roomId}/mobile-devices`, function(devices) {
-                    const tbody = $('#mobile-devices-table');
-                    tbody.empty();
-
-                    devices.forEach((device, index) => {
-                        const row = `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${device.code}</td>
-                                <td>${device.device.name}</td>
-                                <td>
-                                    ${device.status === 'available' ?
-                                        '<span class="badge badge-success">Có sẵn</span>' :
-                                        '<span class="badge badge-danger">Không khả dụng</span>'
-                                    }
-                                </td>
-                                <td>
-                                    ${device.status === 'available' ?
-                                        `<input type="checkbox" name="device_items[]" value="${device.id}">` :
-                                        ''
-                                    }
-                                </td>
-                            </tr>
-                        `;
-                        tbody.append(row);
-                    });
-                });
-            } else {
-                $('#mobile-devices-table').empty();
-            }
-        });
-    });
-</script>
 @endsection

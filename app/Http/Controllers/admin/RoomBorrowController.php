@@ -32,9 +32,7 @@ class RoomBorrowController extends Controller
             'room_id' => 'required|exists:rooms,id',
             'borrow_date' => 'required|date',
             'return_date' => 'required|date|after:borrow_date',
-            'reason' => 'required|string|max:1000',
-            'device_items' => 'nullable|array',
-            'device_items.*' => 'exists:device_items,id'
+            'reason' => 'required|string|max:1000'
         ]);
 
         DB::beginTransaction();
@@ -49,16 +47,6 @@ class RoomBorrowController extends Controller
                 'status' => 'pending'
             ]);
 
-            // Cập nhật trạng thái thiết bị cố định
-            $room = Room::find($validated['room_id']);
-            $room->fixedDeviceItems()->update(['status' => 'in_use']);
-
-            // Cập nhật trạng thái thiết bị di động được chọn
-            if (!empty($validated['device_items'])) {
-                DeviceItem::whereIn('id', $validated['device_items'])
-                    ->update(['status' => 'in_use']);
-            }
-
             DB::commit();
             return redirect()->route('room-borrows.index')
                 ->with('success', 'Phiếu mượn phòng đã được tạo thành công.');
@@ -70,7 +58,7 @@ class RoomBorrowController extends Controller
 
     public function show(RoomBorrow $roomBorrow)
     {
-        $roomBorrow->load(['room', 'user', 'staff', 'room.deviceItems.device']);
+        $roomBorrow->load(['room', 'user', 'staff']);
         return view('admin.room-borrows.show', compact('roomBorrow'));
     }
 
@@ -108,10 +96,6 @@ class RoomBorrowController extends Controller
                 'status' => 'returned'
             ]);
 
-            // Cập nhật trạng thái thiết bị về available
-            $roomBorrow->room->fixedDeviceItems()->update(['status' => 'available']);
-            $roomBorrow->room->mobileDeviceItems()->update(['status' => 'available']);
-
             DB::commit();
             return back()->with('success', 'Phiếu mượn phòng đã được đánh dấu là đã trả.');
         } catch (\Exception $e) {
@@ -133,10 +117,6 @@ class RoomBorrowController extends Controller
             $roomBorrow->update([
                 'status' => 'cancelled'
             ]);
-
-            // Cập nhật trạng thái thiết bị về available
-            $roomBorrow->room->fixedDeviceItems()->update(['status' => 'available']);
-            $roomBorrow->room->mobileDeviceItems()->update(['status' => 'available']);
 
             DB::commit();
             return back()->with('success', 'Phiếu mượn phòng đã được hủy thành công.');

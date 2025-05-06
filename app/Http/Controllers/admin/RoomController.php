@@ -42,7 +42,7 @@ class RoomController extends Controller
 
     public function show(Room $room)
     {
-        $room->load(['department', 'deviceItems.device', 'fixedDeviceItems', 'mobileDeviceItems']);
+        $room->load(['department']);
         return view('admin.rooms.show', compact('room'));
     }
 

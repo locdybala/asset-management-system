@@ -67,7 +67,7 @@
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('room-borrows.index') }}">Danh sách mượn</a></li>
-                    <li><a href="{{ route('borrow-room') }}">Đăng ký mượn</a></li>
+                    <li><a href="{{ route('room-borrows.create') }}">Đăng ký mượn</a></li>
                 </ul>
             </li>
 
@@ -79,7 +79,6 @@
                 <ul aria-expanded="false">
                     <li><a href="{{ route('maintenances.index') }}">Danh sách bảo trì</a></li>
                     <li><a href="{{ route('maintenances.create') }}">Thêm bảo trì</a></li>
-                    <li><a href="{{ route('maintenances.check-periodic') }}">Kiểm tra bảo trì định kỳ</a></li>
                 </ul>
             </li>
 
@@ -96,15 +95,7 @@
                 </ul>
             </li>
 
-            <li class="nav-label">Cấu hình hệ thống</li>
-            <li>
-                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                    <i class="icon-settings menu-icon"></i><span class="nav-text">Cài đặt</span>
-                </a>
-                <ul aria-expanded="false">
-                    <li><a href="{{ route('settings.index') }}">Cài đặt hệ thống</a></li>
-                </ul>
-            </li>
+        
         </ul>
     </div>
 </div>
