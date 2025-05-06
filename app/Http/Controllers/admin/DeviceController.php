@@ -127,7 +127,7 @@ class DeviceController extends Controller
             $device = Device::with('deviceItems')->findOrFail($id);
 
             // Kiểm tra xem có thiết bị con nào đang được mượn không
-            $borrowedItems = $device->deviceItems()->where('status', 'borrowed')->count();
+            $borrowedItems = $device->deviceItems()->where('status', 'in_use')->count();
             if ($borrowedItems > 0) {
                 return response()->json([
                     'success' => false,
@@ -142,7 +142,7 @@ class DeviceController extends Controller
 
             // Xóa thiết bị con
             $device->deviceItems()->delete();
-            
+
             // Xóa thiết bị
             $device->delete();
 

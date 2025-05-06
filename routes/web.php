@@ -44,7 +44,8 @@ Route::prefix('admin')->group(function () {
         // Device management
         Route::resource('devices', DeviceController::class);
         Route::resource('device-items', DeviceItemController::class);
-        Route::get('/device-items/{device_id}/json', [DeviceItemController::class, 'getDeviceItems'])->name('api.device-items');
+        Route::get('/device-items/{device_id}', [DeviceItemController::class, 'getDeviceItems'])->name('api.device-items');
+        Route::get('/device-items/{device}/json', [DeviceItemController::class, 'json'])->name('device-items.json');
 
         // Room management
         Route::resource('rooms', RoomController::class);
@@ -55,9 +56,10 @@ Route::prefix('admin')->group(function () {
 
         // Device borrowing management
         Route::resource('device-borrows', BorrowController::class);
+        Route::get('device-borrows/{id}/return', [BorrowController::class, 'showReturnForm'])->name('device-borrows.return');
+        Route::post('device-borrows/{id}/return', [BorrowController::class, 'markReturned'])->name('device-borrows.return.post');
         Route::get('/device-borrows/device-items/{device_id}', [BorrowController::class, 'getDeviceItems']);
         Route::post('device-borrows/{id}/approve', [BorrowController::class, 'approve'])->name('device-borrows.approve');
-        Route::post('device-borrows/{id}/return', [BorrowController::class, 'markReturned'])->name('device-borrows.return');
         Route::post('device-borrows/{id}/cancel', [BorrowController::class, 'cancel'])->name('device-borrows.cancel');
         Route::get('/device-borrows/{id}/details', [BorrowController::class, 'getBorrowDetails'])->name('device-borrows.details');
 

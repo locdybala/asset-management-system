@@ -9,9 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('device_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('room_id')->nullable();
-            $table->boolean('is_fixed')->default(false);
-            $table->foreign('room_id')->references('id')->on('rooms');
         });
     }
 
