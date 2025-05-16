@@ -13,7 +13,15 @@ class RoomBorrowController extends Controller
 {
     public function index()
     {
-        $roomBorrows = RoomBorrow::with(['room', 'user', 'staff'])->latest()->get();
+        if (auth()->user()->hasRole('admin')) {
+            $roomBorrows = RoomBorrow::with(['user', 'room'])->latest()->get();
+        } else {
+            // Nếu là teacher hoặc student thì chỉ hiển thị danh sách mượn phòng của họ
+            $roomBorrows = RoomBorrow::with(['user', 'room'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+        }
         return view('admin.room-borrows.index', compact('roomBorrows'));
     }
 

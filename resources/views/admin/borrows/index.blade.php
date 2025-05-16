@@ -8,136 +8,99 @@
             <div class="row page-titles mx-0">
                 <div class="col-sm-6 p-md-0">
                     <div class="welcome-text">
-                        <h4>Phiếu mượn thiết bị</h4>
-                        <span class="ml-1">Quản lý phiếu mượn & trả thiết bị</span>
+                        <h4>Danh sách mượn thiết bị</h4>
+                        <span class="ml-1">Quản lý mượn trả thiết bị</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-0">Danh sách phiếu mượn</h4>
-                    <a href="{{ route('device-borrows.create') }}" class="btn btn-primary">
-                        <i class="fa fa-plus-circle"></i> Tạo phiếu mượn
-                    </a>
-                </div>
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Danh sách mượn thiết bị</h4>
+                            @role('admin')
+                            <a href="{{ route('device-borrows.create') }}" class="btn btn-primary">Đăng ký mượn mới</a>
+                            @endrole
                         </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-                    <div class="table-responsive">
-                        <table id="example" class="table table-hover" style="min-width: 845px">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="text-center" width="5%">#</th>
-                                    <th width="15%">Người mượn</th>
-                                    <th width="12%">Ngày mượn</th>
-                                    <th width="12%">Ngày trả</th>
-                                    <th>Lý do mượn</th>
-                                    <th width="12%">Trạng thái</th>
-                                    <th class="text-center" width="15%">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($borrows as $key => $borrow)
-                                    <tr class="border-bottom">
-                                        <td class="text-center align-middle">
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <span class="mr-2">{{ $key + 1 }}</span>
-                                                <button class="btn btn-link p-0 toggle-details"
-                                                    data-borrow-id="{{ $borrow->id }}">
-                                                    <i class="fa fa-chevron-down"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar avatar-sm mr-2">
-                                                    <div class="avatar-title rounded-circle bg-primary">
-                                                        {{ substr($borrow->user->name, 0, 1) }}
-                                                    </div>
-                                                </div>
-                                                {{ $borrow->user->name }}
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            {{ \Carbon\Carbon::parse($borrow->borrow_date)->format('d/m/Y') }}</td>
-                                        <td class="align-middle">
-                                            {{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('d/m/Y') : 'Chưa trả' }}
-                                        </td>
-                                        <td class="align-middle">{{ Str::limit($borrow->reason, 50) }}</td>
-                                        <td class="align-middle">
-                                            @php
-                                                $color = match ($borrow->status) {
-                                                    'pending' => 'warning',
-                                                    'approved' => 'info',
-                                                    'borrowed' => 'primary',
-                                                    'returned' => 'success',
-                                                    'cancelled' => 'danger',
-                                                    default => 'secondary',
-                                                };
-                                            @endphp
-                                            <span class="badge badge-{{ $color }} badge-pill px-3 py-2">
-                                                <i class="fa fa-circle mr-1 small"></i>
-                                                {{ $borrow->status_text }}
-                                            </span>
-                                        </td>
-                                        <td class="text-center align-middle">
-                                            <div class="btn-group">
-                                                @if ($borrow->status === 'pending')
-                                                    <form method="POST"
-                                                        action="{{ route('device-borrows.approve', $borrow->id) }}"
-                                                        class="mr-1">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-outline-success"
-                                                            data-toggle="tooltip" title="Duyệt">
-                                                            <i class="fa fa-check"></i>
-                                                        </button>
-                                                    </form>
-                                                    <form method="POST"
-                                                        action="{{ route('device-borrows.cancel', $borrow->id) }}">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                            data-toggle="tooltip" title="Hủy">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </form>
-                                                @elseif ($borrow->status === 'approved')
-                                                    <a href="{{ route('device-borrows.return', $borrow->id) }}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" title="Trả">
-                                                        <i class="fa fa-undo"></i>
+                        <div class="card-body">
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã phiếu</th>
+                                            <th>Người mượn</th>
+                                            <th>Ngày mượn</th>
+                                            <th>Ngày trả dự kiến</th>
+                                            <th>Trạng thái</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($borrows as $borrow)
+                                            <tr>
+                                                <td>{{ $borrow->id }}</td>
+                                                <td>{{ $borrow->user->name }}</td>
+                                                <td>{{ $borrow->borrow_date }}</td>
+                                                <td>{{ $borrow->return_date }}</td>
+                                                <td>
+                                                    @switch($borrow->status)
+                                                        @case('pending')
+                                                            <span class="badge badge-warning">Chờ duyệt</span>
+                                                            @break
+                                                        @case('approved')
+                                                            <span class="badge badge-success">Đã duyệt</span>
+                                                            @break
+                                                        @case('rejected')
+                                                            <span class="badge badge-danger">Từ chối</span>
+                                                            @break
+                                                        @case('returned')
+                                                            <span class="badge badge-info">Đã trả</span>
+                                                            @break
+                                                    @endswitch
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('device-borrows.show', $borrow->id) }}" class="btn btn-info btn-sm">
+                                                        <i class="fa fa-eye"></i>
                                                     </a>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Chi tiết phiếu mượn sẽ được chèn ngay sau mỗi dòng -->
-                                    <div class="borrow-details-row" data-parent-row-id="{{ $borrow->id }}">
-                                        <div class="borrow-details-wrapper" data-borrow-id="{{ $borrow->id }}" style="display: none;">
-                                            <div class="borrow-details">
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th class="text-center" width="5%">#</th>
-                                    <th width="15%">Người mượn</th>
-                                    <th width="12%">Ngày mượn</th>
-                                    <th width="12%">Ngày trả</th>
-                                    <th>Lý do mượn</th>
-                                    <th width="12%">Trạng thái</th>
-                                    <th class="text-center" width="15%">Thao tác</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                                    @role('admin')
+                                                    @if($borrow->status == 'pending')
+                                                        <form action="{{ route('device-borrows.approve', $borrow->id) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-success btn-sm">
+                                                                <i class="fa fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('device-borrows.cancel', $borrow->id) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fa fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    @if($borrow->status == 'approved')
+                                                        <a href="{{ route('device-borrows.return', $borrow->id) }}" class="btn btn-primary btn-sm">
+                                                            <i class="fa fa-undo"></i>
+                                                        </a>
+                                                    @endif
+                                                    @endrole
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

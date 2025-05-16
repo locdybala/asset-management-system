@@ -7,6 +7,7 @@
             <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
                     <h4>Quản lý vai trò</h4>
+                    <span class="ml-1">Danh sách vai trò</span>
                 </div>
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
@@ -18,11 +19,10 @@
         </div>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-xl-12 col-xxl-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Danh sách vai trò</h4>
-                        <a href="{{ route('roles.create') }}" class="btn btn-primary">Thêm vai trò mới</a>
                     </div>
                     <div class="card-body">
                         @if(session('success'))
@@ -38,42 +38,28 @@
                         @endif
 
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Tên vai trò</th>
-                                        <th>Mô tả</th>
+                                        <th>Vai trò</th>
+                                        <th>Quyền</th>
                                         <th>Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($roles as $role)
+                                    @foreach($roles as $role)
                                         <tr>
-                                            <td>{{ $role->id }}</td>
                                             <td>{{ $role->name }}</td>
-                                            <td>{{ $role->description }}</td>
                                             <td>
-                                                <a href="{{ route('roles.show', $role->id) }}" class="btn btn-info btn-sm">
-                                                    <i class="fa fa-eye"></i>
-                                                </a>
-                                                <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-warning btn-sm">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-                                                <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa vai trò này?')">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                @foreach($role->permissions as $permission)
+                                                    <span class="badge badge-primary">{{ $permission->name }}</span>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-primary btn-sm">Gán quyền</a>
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center">Không có vai trò nào</td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

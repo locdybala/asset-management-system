@@ -6,87 +6,96 @@
         <div class="row page-titles mx-0">
             <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
-                    <h4>Danh sách phiếu mượn phòng</h4>
+                    <h4>Danh sách mượn phòng</h4>
+                    <span class="ml-1">Quản lý mượn trả phòng</span>
                 </div>
-            </div>
-            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                <a href="{{ route('room-borrows.create') }}" class="btn btn-primary">
-                    <i class="fa fa-plus"></i> Tạo phiếu mượn mới
-                </a>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-xl-12 col-xxl-12">
                 <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Danh sách mượn phòng</h4>
+                        @role('admin')
+                        <a href="{{ route('borrow-room') }}" class="btn btn-primary">Đăng ký mượn mới</a>
+                        @endrole
+                    </div>
                     <div class="card-body">
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Phòng</th>
+                                        <th>Mã phiếu</th>
                                         <th>Người mượn</th>
+                                        <th>Phòng</th>
                                         <th>Ngày mượn</th>
-                                        <th>Ngày trả</th>
-                                        <th>Lý do</th>
+                                        <th>Ngày trả dự kiến</th>
                                         <th>Trạng thái</th>
                                         <th>Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($roomBorrows as $borrow)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $borrow->room->name }}</td>
-                                        <td>{{ $borrow->user->name }}</td>
-                                        <td>{{ $borrow->borrow_date->format('d/m/Y H:i') }}</td>
-                                        <td>{{ $borrow->return_date->format('d/m/Y H:i') }}</td>
-                                        <td>{{ Str::limit($borrow->reason, 50) }}</td>
-                                        <td>
-                                            @if($borrow->status == 'pending')
-                                                <span class="badge badge-warning">Chờ duyệt</span>
-                                            @elseif($borrow->status == 'approved')
-                                                <span class="badge badge-success">Đã duyệt</span>
-                                            @elseif($borrow->status == 'returned')
-                                                <span class="badge badge-info">Đã trả</span>
-                                            @else
-                                                <span class="badge badge-danger">Đã hủy</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <a href="{{ route('room-borrows.show', $borrow->id) }}" class="btn btn-info btn-sm mr-1">
+                                    @forelse($roomBorrows as $roomBorrow)
+                                        <tr>
+                                            <td>{{ $roomBorrow->code }}</td>
+                                            <td>{{ $roomBorrow->user->name }}</td>
+                                            <td>{{ $roomBorrow->room->name }}</td>
+                                            <td>{{ $roomBorrow->borrow_date }}</td>
+                                            <td>{{ $roomBorrow->expected_return_date }}</td>
+                                            <td>
+                                                @switch($roomBorrow->status)
+                                                    @case('pending')
+                                                        <span class="badge badge-warning">Chờ duyệt</span>
+                                                        @break
+                                                    @case('approved')
+                                                        <span class="badge badge-success">Đã duyệt</span>
+                                                        @break
+                                                    @case('rejected')
+                                                        <span class="badge badge-danger">Từ chối</span>
+                                                        @break
+                                                    @case('returned')
+                                                        <span class="badge badge-info">Đã trả</span>
+                                                        @break
+                                                @endswitch
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('room-borrows.show', $roomBorrow->id) }}" class="btn btn-info btn-sm">
                                                     <i class="fa fa-eye"></i>
                                                 </a>
-                                                @if($borrow->status == 'pending')
-                                                    <form action="{{ route('room-borrows.approve', $borrow->id) }}" method="POST" style="display:inline-block;">
+                                                @role('admin')
+                                                @if($roomBorrow->status == 'pending')
+                                                    <form action="{{ route('room-borrows.approve', $roomBorrow->id) }}" method="POST" style="display: inline;">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-success btn-sm mr-1" onclick="return confirm('Bạn có chắc chắn muốn duyệt phiếu mượn này?')">
+                                                        <button type="submit" class="btn btn-success btn-sm">
                                                             <i class="fa fa-check"></i>
                                                         </button>
                                                     </form>
-                                                    <form action="{{ route('room-borrows.cancel', $borrow->id) }}" method="POST" style="display:inline-block;">
+                                                    <form action="{{ route('room-borrows.reject', $roomBorrow->id) }}" method="POST" style="display: inline;">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn hủy phiếu mượn này?')">
+                                                        <button type="submit" class="btn btn-danger btn-sm">
                                                             <i class="fa fa-times"></i>
                                                         </button>
                                                     </form>
-                                                @elseif($borrow->status == 'approved')
-                                                    <form action="{{ route('room-borrows.return', $borrow->id) }}" method="POST" style="display:inline-block;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Bạn có chắc chắn muốn đánh dấu đã trả?')">
-                                                            <i class="fa fa-undo"></i>
-                                                        </button>
-                                                    </form>
                                                 @endif
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                @if($roomBorrow->status == 'approved')
+                                                    <a href="{{ route('room-borrows.return', $roomBorrow->id) }}" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-undo"></i>
+                                                    </a>
+                                                @endif
+                                                @endrole
+                                            </td>
+                                        </tr>
                                     @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center">Chưa có phiếu mượn nào</td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="7" class="text-center">Không có dữ liệu</td>
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>

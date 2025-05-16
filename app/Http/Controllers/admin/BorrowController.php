@@ -16,7 +16,15 @@ class BorrowController extends Controller
 {
     public function index()
     {
-        $borrows = Borrow::with('user', 'staff')->latest()->get();
+        if (auth()->user()->hasRole('admin')) {
+            $borrows = Borrow::with(['user', 'details.deviceItem'])->latest()->get();
+        } else {
+            // Nếu là teacher hoặc student thì chỉ hiển thị danh sách mượn của họ
+            $borrows = Borrow::with(['user', 'details.deviceItem'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+        }
         return view('admin.borrows.index', compact('borrows'));
     }
 

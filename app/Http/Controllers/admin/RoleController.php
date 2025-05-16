@@ -11,6 +11,13 @@ class RoleController extends Controller
 {
     public function index()
     {
+        // Tự động tạo 3 role nếu chưa tồn tại
+        $roles = ['admin', 'teacher', 'student'];
+        foreach ($roles as $roleName) {
+            if (!Role::where('name', $roleName)->exists()) {
+                Role::create(['name' => $roleName]);
+            }
+        }
         $roles = Role::with('permissions')->get();
         return view('admin.roles.index', compact('roles'));
     }

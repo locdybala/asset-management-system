@@ -5,6 +5,7 @@
             <li><a href="{{ route('dashboard') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
                 class="nav-text">Trang chủ</span></a></li>
 
+            @role('admin')
             <li class="nav-label">Quản lý hệ thống</li>
             <li>
                 <a class="has-arrow" href="javascript:void()" aria-expanded="false">
@@ -49,6 +50,7 @@
                     <li><a href="{{ route('rooms.create') }}">Thêm phòng</a></li>
                 </ul>
             </li>
+            @endrole
 
             <li class="nav-label">Quản lý mượn trả</li>
             <li>
@@ -71,6 +73,7 @@
                 </ul>
             </li>
 
+            @role('admin')
             <li class="nav-label">Quản lý bảo trì</li>
             <li>
                 <a class="has-arrow" href="javascript:void()" aria-expanded="false">
@@ -105,6 +108,7 @@
                     <li><a href="{{ route('settings.index') }}">Cài đặt hệ thống</a></li>
                 </ul>
             </li>
+            @endrole
         </ul>
     </div>
 </div>
