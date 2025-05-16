@@ -49,9 +49,10 @@
                                             <td><span class="text-primary font-weight-bold">{{ $user->name }}</span></td>
                                             <td><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
                                             <td>
+                                                {{$user->role}}
                                                 @if($user->role === 'admin')
                                                     <span class="badge badge-danger">Admin</span>
-                                                @elseif($user->role === 'manager')
+                                                @elseif($user->role === 'teacher')
                                                     <span class="badge badge-warning">Manager</span>
                                                 @else
                                                     <span class="badge badge-secondary">User</span>

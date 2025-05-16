@@ -29,8 +29,6 @@
                                         <th>Mã phòng</th>
                                         <th>Khoa</th>
                                         <th>Trạng thái</th>
-                                        <th>Thiết bị cố định</th>
-                                        <th>Thiết bị di động</th>
                                         <th>Thao tác</th>
                                     </tr>
                                 </thead>
@@ -48,8 +46,6 @@
                                                 <span class="badge badge-danger">Đang sử dụng</span>
                                             @endif
                                         </td>
-                                        <td>{{ $room->fixedDeviceItems->count() }}</td>
-                                        <td>{{ $room->mobileDeviceItems->count() }}</td>
                                         <td>
                                             <div class="d-flex">
                                                 <a href="{{ route('rooms.show', $room->id) }}" class="btn btn-info btn-sm mr-1">

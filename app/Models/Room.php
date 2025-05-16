@@ -21,21 +21,6 @@ class Room extends Model
         return $this->belongsTo(Department::class);
     }
 
-    public function deviceItems()
-    {
-        return $this->hasMany(DeviceItem::class);
-    }
-
-    public function fixedDeviceItems()
-    {
-        return $this->deviceItems()->where('is_fixed', true);
-    }
-
-    public function mobileDeviceItems()
-    {
-        return $this->deviceItems()->where('is_fixed', false);
-    }
-
     public function borrows()
     {
         return $this->hasMany(RoomBorrow::class);

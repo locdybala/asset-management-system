@@ -60,17 +60,6 @@ class RoomSeeder extends Seeder
                 'status' => $roomData['status'],
                 'department_id' => $department->id
             ]);
-
-            // Gán ngẫu nhiên một số thiết bị cố định cho phòng
-            $fixedDevices = DeviceItem::where('is_fixed', true)
-                ->whereNull('room_id')
-                ->inRandomOrder()
-                ->take(rand(3, 8))
-                ->get();
-
-            foreach ($fixedDevices as $device) {
-                $device->update(['room_id' => $room->id]);
-            }
         }
     }
 }
